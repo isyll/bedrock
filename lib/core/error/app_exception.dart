@@ -56,6 +56,12 @@ final class PermissionException extends AppException {
   final bool permanentlyDenied;
 }
 
+final class LocationException extends AppException {
+  const LocationException(super.message, {this.serviceDisabled = false});
+
+  final bool serviceDisabled;
+}
+
 final class UnexpectedException extends AppException {
   const UnexpectedException(super.message, {this.cause, this.stackTrace});
 

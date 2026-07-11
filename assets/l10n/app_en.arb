@@ -53,6 +53,7 @@
   "errorValidationMessage": "Some fields are invalid. Please review them.",
   "errorPermissionDeniedMessage": "This feature needs a permission you have not granted yet.",
   "errorPermissionPermanentlyDeniedMessage": "Permission denied. Enable it in the system settings to use this feature.",
+  "errorLocationDisabledMessage": "Location services are turned off. Enable them to use this feature.",
   "openSettingsButton": "Open settings",
   "sessionExpiredMessage": "Your session has expired. Please sign in again.",
   "emptyTitle": "Nothing here yet",

@@ -11,6 +11,7 @@ extension AppExceptionMessage on AppException {
     PermissionException(permanentlyDenied: true) =>
       l10n.errorPermissionPermanentlyDeniedMessage,
     PermissionException() => l10n.errorPermissionDeniedMessage,
+    LocationException() => l10n.errorLocationDisabledMessage,
     ApiException(:final message) when message.isNotEmpty => message,
     _ => l10n.errorGenericMessage,
   };

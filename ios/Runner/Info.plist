@@ -48,6 +48,8 @@
 		<true/>
 		<key>NSCameraUsageDescription</key>
 		<string>This app uses the camera to let you take photos.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app uses your location to provide location-based features.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>This app uses the microphone when you record videos.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
