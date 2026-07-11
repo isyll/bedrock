@@ -30,15 +30,17 @@ void main() {
       expect(Validators.password(l10n, ''), l10n.passwordRequired);
     });
 
-    test('enforces the minimum length', () {
-      expect(
+    test(
+      'enforces the minimum length',
+      () => expect(
         Validators.password(l10n, 'short'),
         l10n.passwordTooShort(Validators.passwordMinLength),
-      );
-    });
+      ),
+    );
 
-    test('accepts passwords at or above the minimum length', () {
-      expect(Validators.password(l10n, 'longenough'), isNull);
-    });
+    test(
+      'accepts passwords at or above the minimum length',
+      () => expect(Validators.password(l10n, 'longenough'), isNull),
+    );
   });
 }

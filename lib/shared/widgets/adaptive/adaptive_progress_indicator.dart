@@ -8,16 +8,14 @@ class AdaptiveProgressIndicator extends StatelessWidget {
   final Color? color;
 
   @override
-  Widget build(BuildContext context) {
-    return switch (Theme.of(context).platform) {
-      TargetPlatform.iOS || TargetPlatform.macOS => CupertinoActivityIndicator(
-        radius: size / 2,
-        color: color,
-      ),
-      _ => SizedBox.square(
-        dimension: size,
-        child: CircularProgressIndicator(strokeWidth: 2.5, color: color),
-      ),
-    };
-  }
+  Widget build(BuildContext context) => switch (Theme.of(context).platform) {
+    .iOS || .macOS => CupertinoActivityIndicator(
+      radius: size / 2,
+      color: color,
+    ),
+    _ => SizedBox.square(
+      dimension: size,
+      child: CircularProgressIndicator(strokeWidth: 2.5, color: color),
+    ),
+  };
 }

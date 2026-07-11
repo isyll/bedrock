@@ -11,17 +11,17 @@ final class ConsoleLogSink implements LogSink {
     this.maxStackFrames = 8,
   });
 
-  @override
-  final LogLevel minimumLevel;
-
-  final bool useColors;
-  final int lineLength;
-  final int maxStackFrames;
-
   static const _reset = '\x1B[0m';
+
   static const _bold = '\x1B[1m';
   static const _frame = '\x1B[38;5;240m';
   static const _muted = '\x1B[38;5;246m';
+
+  @override
+  final LogLevel minimumLevel;
+  final bool useColors;
+  final int lineLength;
+  final int maxStackFrames;
 
   @override
   void write(LogRecord record) {
@@ -44,16 +44,6 @@ final class ConsoleLogSink implements LogSink {
     debugPrint(buffer.toString());
   }
 
-  String _header(LogRecord record) {
-    final color = _levelColor(record.level);
-    final title =
-        '${record.level.symbol} ${record.level.label}'
-        ' · ${record.loggerName} · ${_time(record.timestamp)}';
-    final rule = '─' * math.max(4, lineLength - title.length - 5);
-    if (!useColors) return '╭─ $title $rule';
-    return '$_frame╭─$_reset $color$_bold$title$_reset $_frame$rule$_reset';
-  }
-
   String _divider() {
     final rule = '╌' * (lineLength - 1);
     return useColors ? '$_frame├$rule$_reset' : '├$rule';
@@ -62,17 +52,6 @@ final class ConsoleLogSink implements LogSink {
   String _footer() {
     final rule = '─' * (lineLength - 1);
     return useColors ? '$_frame╰$rule$_reset' : '╰$rule';
-  }
-
-  void _writeBody(StringBuffer buffer, String text, String color) {
-    final bar = useColors ? '$_frame│$_reset' : '│';
-    for (final line in text.trimRight().split('\n')) {
-      if (useColors && color.isNotEmpty) {
-        buffer.writeln('$bar $color$line$_reset');
-      } else {
-        buffer.writeln('$bar $line');
-      }
-    }
   }
 
   String _formatStack(StackTrace stackTrace) {
@@ -90,6 +69,23 @@ final class ConsoleLogSink implements LogSink {
     ].join('\n');
   }
 
+  String _header(LogRecord record) {
+    final color = _levelColor(record.level);
+    final title =
+        '${record.level.symbol} ${record.level.label}'
+        ' · ${record.loggerName} · ${_time(record.timestamp)}';
+    final rule = '─' * math.max(4, lineLength - title.length - 5);
+    if (!useColors) return '╭─ $title $rule';
+    return '$_frame╭─$_reset $color$_bold$title$_reset $_frame$rule$_reset';
+  }
+
+  String _levelColor(LogLevel level) => switch (level) {
+    .debug => '\x1B[38;5;244m',
+    .info => '\x1B[38;5;75m',
+    .warning => '\x1B[38;5;214m',
+    .error => '\x1B[38;5;203m',
+  };
+
   String _time(DateTime timestamp) {
     String pad(int value, [int width = 2]) =>
         value.toString().padLeft(width, '0');
@@ -97,10 +93,14 @@ final class ConsoleLogSink implements LogSink {
         ':${pad(timestamp.second)}.${pad(timestamp.millisecond, 3)}';
   }
 
-  String _levelColor(LogLevel level) => switch (level) {
-    LogLevel.debug => '\x1B[38;5;244m',
-    LogLevel.info => '\x1B[38;5;75m',
-    LogLevel.warning => '\x1B[38;5;214m',
-    LogLevel.error => '\x1B[38;5;203m',
-  };
+  void _writeBody(StringBuffer buffer, String text, String color) {
+    final bar = useColors ? '$_frame│$_reset' : '│';
+    for (final line in text.trimRight().split('\n')) {
+      if (useColors && color.isNotEmpty) {
+        buffer.writeln('$bar $color$line$_reset');
+      } else {
+        buffer.writeln('$bar $line');
+      }
+    }
+  }
 }

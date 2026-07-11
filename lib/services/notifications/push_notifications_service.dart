@@ -5,13 +5,14 @@ import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-typedef NotificationRouteHandler = void Function(String route);
-typedef TokenHandler = FutureOr<void> Function(String token);
-
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   const AppLogger('Push').debug('Background message: ${message.messageId}');
 }
+
+typedef NotificationRouteHandler = void Function(String route);
+
+typedef TokenHandler = FutureOr<void> Function(String token);
 
 final class PushNotificationsService {
   PushNotificationsService({
@@ -26,7 +27,7 @@ final class PushNotificationsService {
     'default_high_importance',
     'Important notifications',
     description: 'Notifications that require immediate attention',
-    importance: Importance.high,
+    importance: .high,
   );
 
   final NotificationRouteHandler? onOpenRoute;
@@ -37,6 +38,12 @@ final class PushNotificationsService {
   StreamSubscription<RemoteMessage>? _foregroundSubscription;
   StreamSubscription<RemoteMessage>? _openedSubscription;
   StreamSubscription<String>? _tokenSubscription;
+
+  Future<void> dispose() async {
+    await _foregroundSubscription?.cancel();
+    await _openedSubscription?.cancel();
+    await _tokenSubscription?.cancel();
+  }
 
   Future<void> initialize() async {
     final messaging = FirebaseMessaging.instance;
@@ -69,16 +76,10 @@ final class PushNotificationsService {
     if (token != null) await _onToken(token);
   }
 
-  Future<void> dispose() async {
-    await _foregroundSubscription?.cancel();
-    await _openedSubscription?.cancel();
-    await _tokenSubscription?.cancel();
-  }
-
   Future<void> _initializeLocalNotifications() async {
     const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
+      android: .new('@mipmap/ic_launcher'),
+      iOS: .new(),
     );
 
     await _localNotifications.initialize(
@@ -105,13 +106,13 @@ final class PushNotificationsService {
         id: notification.hashCode,
         title: notification.title,
         body: notification.body,
-        notificationDetails: NotificationDetails(
-          android: AndroidNotificationDetails(
+        notificationDetails: .new(
+          android: .new(
             _androidChannel.id,
             _androidChannel.name,
             channelDescription: _androidChannel.description,
-            importance: Importance.high,
-            priority: Priority.high,
+            importance: .high,
+            priority: .high,
           ),
         ),
         payload: message.data[_routeKey] as String?,

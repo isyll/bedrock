@@ -1,7 +1,6 @@
 import 'package:bedrock/app/router/app_route_observer.dart';
 import 'package:bedrock/app/router/app_routes.dart';
 import 'package:bedrock/app/router/stream_refresh_listenable.dart';
-import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:bedrock/features/home/presentation/pages/home_page.dart';
@@ -12,11 +11,11 @@ import 'package:go_router/go_router.dart';
 final class AppRouter {
   AppRouter({required this._sessionBloc});
 
-  final SessionBloc _sessionBloc;
-
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-  late final GoRouter router = GoRouter(
+  final SessionBloc _sessionBloc;
+
+  late final router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.home,
     refreshListenable: StreamRefreshListenable(_sessionBloc.stream),
@@ -41,13 +40,15 @@ final class AppRouter {
     ],
   );
 
+  void dispose() => router.dispose();
+
   String? _redirect(BuildContext context, GoRouterState state) {
     final status = _sessionBloc.state.status;
-    if (status == AuthStatus.unknown) return null;
+    if (status == .unknown) return null;
 
     final location = state.matchedLocation;
     final isPublic = AppRoutes.isPublic(location);
-    final isAuthenticated = status == AuthStatus.authenticated;
+    final isAuthenticated = status == .authenticated;
 
     if (!isAuthenticated && !isPublic) {
       final from = Uri.encodeComponent(state.uri.toString());
@@ -64,6 +65,4 @@ final class AppRouter {
 
     return null;
   }
-
-  void dispose() => router.dispose();
 }

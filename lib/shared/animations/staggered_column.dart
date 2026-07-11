@@ -21,15 +21,13 @@ class StaggeredColumn extends StatelessWidget {
   final Duration initialDelay;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisSize,
-      crossAxisAlignment: crossAxisAlignment,
-      children: [
-        for (final (index, child) in children.indexed)
-          FadeSlideIn(delay: initialDelay + interval * index, child: child),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+    mainAxisAlignment: mainAxisAlignment,
+    mainAxisSize: mainAxisSize,
+    crossAxisAlignment: crossAxisAlignment,
+    children: [
+      for (final (index, child) in children.indexed)
+        FadeSlideIn(delay: initialDelay + interval * index, child: child),
+    ],
+  );
 }

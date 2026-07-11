@@ -6,21 +6,19 @@ export 'package:bedrock/core/logging/log_record.dart';
 final class AppLogger {
   const AppLogger(this.name);
 
+  static final _sinks = <LogSink>[const ConsoleLogSink()];
+
   final String name;
 
-  static final List<LogSink> _sinks = [const ConsoleLogSink()];
-
-  static void addSink(LogSink sink) => _sinks.add(sink);
-
-  void debug(String message) => _log(LogLevel.debug, message);
-
-  void info(String message) => _log(LogLevel.info, message);
-
-  void warning(String message, [Object? error]) =>
-      _log(LogLevel.warning, message, error);
+  void debug(String message) => _log(.debug, message);
 
   void error(String message, [Object? error, StackTrace? stackTrace]) =>
-      _log(LogLevel.error, message, error, stackTrace);
+      _log(.error, message, error, stackTrace);
+
+  void info(String message) => _log(.info, message);
+
+  void warning(String message, [Object? error]) =>
+      _log(.warning, message, error);
 
   void _log(
     LogLevel level,
@@ -32,7 +30,7 @@ final class AppLogger {
       level: level,
       loggerName: name,
       message: message,
-      timestamp: DateTime.now(),
+      timestamp: .now(),
       error: error,
       stackTrace: stackTrace,
     );
@@ -43,4 +41,6 @@ final class AppLogger {
       }
     }
   }
+
+  static void addSink(LogSink sink) => _sinks.add(sink);
 }

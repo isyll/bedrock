@@ -1,18 +1,10 @@
 import 'package:bedrock/core/config/app_config.dart';
-import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/session/session_manager.dart';
-import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
-
-const _config = AppConfig(
-  flavor: AppFlavor.dev,
-  appName: 'Test',
-  apiBaseUrl: 'https://api.test',
-);
 
 void main() {
   late SessionManager session;
@@ -20,20 +12,20 @@ void main() {
 
   setUp(() async {
     final api = ScriptedAuthApi(
-      signInResult: SignInResult(
+      signInResult: .new(
         user: ScriptedAuthApi.demoUser,
-        tokens: AuthTokens(
+        tokens: .new(
           accessToken: 'access',
           refreshToken: 'refresh',
-          expiresAt: DateTime.now().toUtc().add(const Duration(hours: 1)),
+          expiresAt: .now().toUtc().add(const .new(hours: 1)),
         ),
       ),
     );
-    session = SessionManager(
+    session = .new(
       config: _config,
       storage: InMemorySecureStorage(),
     );
-    repository = AuthRepository(
+    repository = .new(
       api: api,
       session: session,
       storage: InMemoryKeyValueStorage(),
@@ -41,9 +33,7 @@ void main() {
     await repository.signIn(email: 'demo@example.com', password: 'password1');
   });
 
-  tearDown(() {
-    session.dispose();
-  });
+  tearDown(() => session.dispose());
 
   test('starts from the repository snapshot', () {
     final bloc = SessionBloc(authRepository: repository);
@@ -76,3 +66,9 @@ void main() {
     expect(bloc.state.expired, isFalse);
   });
 }
+
+const _config = AppConfig(
+  flavor: .dev,
+  appName: 'Test',
+  apiBaseUrl: 'https://api.test',
+);

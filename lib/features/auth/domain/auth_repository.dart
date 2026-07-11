@@ -11,8 +11,6 @@ import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
 import 'package:dio/dio.dart';
 
-enum AuthStatus { unknown, authenticated, unauthenticated }
-
 final class AuthRepository {
   AuthRepository({
     required this._api,
@@ -28,15 +26,26 @@ final class AuthRepository {
 
   User? _currentUser;
 
-  User? get currentUser => _currentUser;
-
   AuthStatus get currentStatus => _mapStatus(_session.status);
+
+  User? get currentUser => _currentUser;
 
   Stream<AuthStatus> get status => _session.statusStream.map(_mapStatus);
 
+  Future<Result<User>> refreshProfile() async {
+    try {
+      final user = await _api.fetchProfile();
+      _currentUser = user;
+      await _cacheUser(user);
+      return .success(user);
+    } on DioException catch (error) {
+      return .failure(mapDioException(error));
+    }
+  }
+
   Future<void> restore() async {
     await _session.restore();
-    if (_session.status == SessionStatus.active) {
+    if (_session.status == .active) {
       _currentUser = _readCachedUser();
     }
   }
@@ -50,28 +59,17 @@ final class AuthRepository {
       _currentUser = result.user;
       await _cacheUser(result.user);
       await _session.start(result.tokens);
-      return Result.success(result.user);
+      return .success(result.user);
     } on DioException catch (error) {
-      return Result.failure(mapDioException(error));
+      return .failure(mapDioException(error));
     } on Object catch (error, stackTrace) {
-      return Result.failure(
+      return .failure(
         UnexpectedException(
           'Sign in failed unexpectedly',
           cause: error,
           stackTrace: stackTrace,
         ),
       );
-    }
-  }
-
-  Future<Result<User>> refreshProfile() async {
-    try {
-      final user = await _api.fetchProfile();
-      _currentUser = user;
-      await _cacheUser(user);
-      return Result.success(user);
-    } on DioException catch (error) {
-      return Result.failure(mapDioException(error));
     }
   }
 
@@ -82,6 +80,25 @@ final class AuthRepository {
     await _session.end();
   }
 
+  Future<void> _cacheUser(User user) =>
+      _storage.setString(StorageKeys.currentUser, jsonEncode(user.toJson()));
+
+  AuthStatus _mapStatus(SessionStatus status) => switch (status) {
+    .unknown => .unknown,
+    .active => .authenticated,
+    .none => .unauthenticated,
+  };
+
+  User? _readCachedUser() {
+    final raw = _storage.getString(StorageKeys.currentUser);
+    if (raw == null) return null;
+    try {
+      return .fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } on FormatException {
+      return null;
+    }
+  }
+
   Future<void> _revokeServerSession() async {
     try {
       await _api.signOut();
@@ -89,23 +106,6 @@ final class AuthRepository {
       _logger.warning('Server-side sign out failed, ending locally', error);
     }
   }
-
-  AuthStatus _mapStatus(SessionStatus status) => switch (status) {
-    SessionStatus.unknown => AuthStatus.unknown,
-    SessionStatus.active => AuthStatus.authenticated,
-    SessionStatus.none => AuthStatus.unauthenticated,
-  };
-
-  Future<void> _cacheUser(User user) =>
-      _storage.setString(StorageKeys.currentUser, jsonEncode(user.toJson()));
-
-  User? _readCachedUser() {
-    final raw = _storage.getString(StorageKeys.currentUser);
-    if (raw == null) return null;
-    try {
-      return User.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } on FormatException {
-      return null;
-    }
-  }
 }
+
+enum AuthStatus { unknown, authenticated, unauthenticated }

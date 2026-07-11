@@ -1,8 +1,6 @@
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
 
-enum SnackBarKind { info, success, error }
-
 void showAppSnackBar(
   BuildContext context,
   String message, {
@@ -12,20 +10,22 @@ void showAppSnackBar(
   final semantic = context.semanticColors;
 
   final (background, foreground) = switch (kind) {
-    SnackBarKind.info => (
+    .info => (
       colorScheme.inverseSurface,
       colorScheme.onInverseSurface,
     ),
-    SnackBarKind.success => (semantic.success, semantic.onSuccess),
-    SnackBarKind.error => (colorScheme.error, colorScheme.onError),
+    .success => (semantic.success, semantic.onSuccess),
+    .error => (colorScheme.error, colorScheme.onError),
   };
 
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(
-        content: Text(message, style: TextStyle(color: foreground)),
+      .new(
+        content: Text(message, style: .new(color: foreground)),
         backgroundColor: background,
       ),
     );
 }
+
+enum SnackBarKind { info, success, error }

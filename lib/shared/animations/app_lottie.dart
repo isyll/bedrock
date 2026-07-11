@@ -21,7 +21,7 @@ class AppLottie extends StatelessWidget {
     Widget animation = Lottie.asset(
       asset,
       repeat: repeat,
-      fit: BoxFit.contain,
+      fit: .contain,
       errorBuilder: (context, error, stackTrace) => Icon(
         Icons.animation,
         size: size,

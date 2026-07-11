@@ -104,55 +104,53 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? onInfo,
     Color? infoContainer,
     Color? onInfoContainer,
-  }) {
-    return AppSemanticColors(
-      success: success ?? this.success,
-      onSuccess: onSuccess ?? this.onSuccess,
-      successContainer: successContainer ?? this.successContainer,
-      onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
-      warning: warning ?? this.warning,
-      onWarning: onWarning ?? this.onWarning,
-      warningContainer: warningContainer ?? this.warningContainer,
-      onWarningContainer: onWarningContainer ?? this.onWarningContainer,
-      info: info ?? this.info,
-      onInfo: onInfo ?? this.onInfo,
-      infoContainer: infoContainer ?? this.infoContainer,
-      onInfoContainer: onInfoContainer ?? this.onInfoContainer,
-    );
-  }
+  }) => .new(
+    success: success ?? this.success,
+    onSuccess: onSuccess ?? this.onSuccess,
+    successContainer: successContainer ?? this.successContainer,
+    onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
+    warning: warning ?? this.warning,
+    onWarning: onWarning ?? this.onWarning,
+    warningContainer: warningContainer ?? this.warningContainer,
+    onWarningContainer: onWarningContainer ?? this.onWarningContainer,
+    info: info ?? this.info,
+    onInfo: onInfo ?? this.onInfo,
+    infoContainer: infoContainer ?? this.infoContainer,
+    onInfoContainer: onInfoContainer ?? this.onInfoContainer,
+  );
 
   @override
   AppSemanticColors lerp(AppSemanticColors? other, double t) {
     if (other == null) return this;
-    return AppSemanticColors(
-      success: Color.lerp(success, other.success, t)!,
-      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
-      successContainer: Color.lerp(
+    return .new(
+      success: .lerp(success, other.success, t)!,
+      onSuccess: .lerp(onSuccess, other.onSuccess, t)!,
+      successContainer: .lerp(
         successContainer,
         other.successContainer,
         t,
       )!,
-      onSuccessContainer: Color.lerp(
+      onSuccessContainer: .lerp(
         onSuccessContainer,
         other.onSuccessContainer,
         t,
       )!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
-      warningContainer: Color.lerp(
+      warning: .lerp(warning, other.warning, t)!,
+      onWarning: .lerp(onWarning, other.onWarning, t)!,
+      warningContainer: .lerp(
         warningContainer,
         other.warningContainer,
         t,
       )!,
-      onWarningContainer: Color.lerp(
+      onWarningContainer: .lerp(
         onWarningContainer,
         other.onWarningContainer,
         t,
       )!,
-      info: Color.lerp(info, other.info, t)!,
-      onInfo: Color.lerp(onInfo, other.onInfo, t)!,
-      infoContainer: Color.lerp(infoContainer, other.infoContainer, t)!,
-      onInfoContainer: Color.lerp(onInfoContainer, other.onInfoContainer, t)!,
+      info: .lerp(info, other.info, t)!,
+      onInfo: .lerp(onInfo, other.onInfo, t)!,
+      infoContainer: .lerp(infoContainer, other.infoContainer, t)!,
+      onInfoContainer: .lerp(onInfoContainer, other.onInfoContainer, t)!,
     );
   }
 }

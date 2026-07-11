@@ -10,10 +10,15 @@ final class PermissionsService {
 
   final AppLogger _logger;
 
-  Future<PermissionResult> status(AppPermission permission) async {
-    final value = await permission.platformPermission.status;
-    return _mapStatus(value);
+  Future<PermissionResult> ensure(AppPermission permission) async {
+    final current = await status(permission);
+    if (current.isUsable || current == .permanentlyDenied) {
+      return current;
+    }
+    return request(permission);
   }
+
+  Future<bool> openSettings() => permission_handler.openAppSettings();
 
   Future<PermissionResult> request(AppPermission permission) async {
     final value = await permission.platformPermission.request();
@@ -22,27 +27,19 @@ final class PermissionsService {
     return result;
   }
 
-  Future<PermissionResult> ensure(AppPermission permission) async {
-    final current = await status(permission);
-    if (current.isUsable || current == PermissionResult.permanentlyDenied) {
-      return current;
-    }
-    return request(permission);
+  Future<PermissionResult> status(AppPermission permission) async {
+    final value = await permission.platformPermission.status;
+    return _mapStatus(value);
   }
 
-  Future<bool> openSettings() => permission_handler.openAppSettings();
-
-  PermissionResult _mapStatus(permission_handler.PermissionStatus status) {
-    return switch (status) {
-      permission_handler.PermissionStatus.granted => PermissionResult.granted,
-      permission_handler.PermissionStatus.limited => PermissionResult.limited,
-      permission_handler.PermissionStatus.provisional =>
-        PermissionResult.granted,
-      permission_handler.PermissionStatus.denied => PermissionResult.denied,
-      permission_handler.PermissionStatus.permanentlyDenied =>
-        PermissionResult.permanentlyDenied,
-      permission_handler.PermissionStatus.restricted =>
-        PermissionResult.restricted,
-    };
-  }
+  PermissionResult _mapStatus(permission_handler.PermissionStatus status) =>
+      switch (status) {
+        .granted => .granted,
+        permission_handler.PermissionStatus.limited => .limited,
+        permission_handler.PermissionStatus.provisional => .granted,
+        permission_handler.PermissionStatus.denied => .denied,
+        permission_handler.PermissionStatus.permanentlyDenied =>
+          .permanentlyDenied,
+        permission_handler.PermissionStatus.restricted => .restricted,
+      };
 }

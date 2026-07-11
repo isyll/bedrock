@@ -7,7 +7,7 @@ final class SessionState extends Equatable {
   final User? user;
   final bool expired;
 
-  bool get isAuthenticated => status == AuthStatus.authenticated;
+  bool get isAuthenticated => status == .authenticated;
 
   @override
   List<Object?> get props => [status, user, expired];

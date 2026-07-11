@@ -37,9 +37,9 @@ final class CrashReporter {
     }
   }
 
-  void recordFlutterError(FlutterErrorDetails details) {
+  void leaveBreadcrumb(String message) {
     if (!_enabled) return;
-    unawaited(FirebaseCrashlytics.instance.recordFlutterFatalError(details));
+    unawaited(FirebaseCrashlytics.instance.log(message));
   }
 
   void recordError(
@@ -59,18 +59,18 @@ final class CrashReporter {
     );
   }
 
-  void leaveBreadcrumb(String message) {
+  void recordFlutterError(FlutterErrorDetails details) {
     if (!_enabled) return;
-    unawaited(FirebaseCrashlytics.instance.log(message));
-  }
-
-  void setUserIdentifier(String? id) {
-    if (!_enabled) return;
-    unawaited(FirebaseCrashlytics.instance.setUserIdentifier(id ?? ''));
+    unawaited(FirebaseCrashlytics.instance.recordFlutterFatalError(details));
   }
 
   void setCustomKey(String key, Object value) {
     if (!_enabled) return;
     unawaited(FirebaseCrashlytics.instance.setCustomKey(key, value));
+  }
+
+  void setUserIdentifier(String? id) {
+    if (!_enabled) return;
+    unawaited(FirebaseCrashlytics.instance.setUserIdentifier(id ?? ''));
   }
 }

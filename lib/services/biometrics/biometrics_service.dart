@@ -16,17 +16,21 @@ class BiometricsService {
   BiometricsService({
     LocalAuthentication? auth,
     this._logger = const AppLogger('Biometrics'),
-  }) : _auth = auth ?? LocalAuthentication();
+  }) : _auth = auth ?? .new();
 
   final LocalAuthentication _auth;
   final AppLogger _logger;
 
-  Future<bool> isSupported() async {
+  Future<BiometricAuthResult> authenticate({required String reason}) async {
     try {
-      return await _auth.isDeviceSupported();
-    } on Exception catch (error) {
-      _logger.warning('Failed to query biometric support', error);
-      return false;
+      final didAuthenticate = await _auth.authenticate(
+        localizedReason: reason,
+        persistAcrossBackgrounding: true,
+      );
+      return didAuthenticate ? .success : .failed;
+    } on LocalAuthException catch (error) {
+      _logger.info('Biometric authentication error: ${error.code.name}');
+      return _mapCode(error.code);
     }
   }
 
@@ -39,33 +43,22 @@ class BiometricsService {
     }
   }
 
-  Future<BiometricAuthResult> authenticate({required String reason}) async {
+  Future<bool> isSupported() async {
     try {
-      final didAuthenticate = await _auth.authenticate(
-        localizedReason: reason,
-        persistAcrossBackgrounding: true,
-      );
-      return didAuthenticate
-          ? BiometricAuthResult.success
-          : BiometricAuthResult.failed;
-    } on LocalAuthException catch (error) {
-      _logger.info('Biometric authentication error: ${error.code.name}');
-      return _mapCode(error.code);
+      return await _auth.isDeviceSupported();
+    } on Exception catch (error) {
+      _logger.warning('Failed to query biometric support', error);
+      return false;
     }
   }
 
-  BiometricAuthResult _mapCode(LocalAuthExceptionCode code) {
-    return switch (code) {
-      LocalAuthExceptionCode.noCredentialsSet ||
-      LocalAuthExceptionCode.noBiometricsEnrolled =>
-        BiometricAuthResult.notEnrolled,
-      LocalAuthExceptionCode.noBiometricHardware ||
-      LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable ||
-      LocalAuthExceptionCode.uiUnavailable => BiometricAuthResult.unavailable,
-      LocalAuthExceptionCode.temporaryLockout => BiometricAuthResult.lockedOut,
-      LocalAuthExceptionCode.biometricLockout =>
-        BiometricAuthResult.permanentlyLockedOut,
-      _ => BiometricAuthResult.failed,
-    };
-  }
+  BiometricAuthResult _mapCode(LocalAuthExceptionCode code) => switch (code) {
+    .noCredentialsSet || .noBiometricsEnrolled => .notEnrolled,
+    .noBiometricHardware ||
+    .biometricHardwareTemporarilyUnavailable ||
+    .uiUnavailable => .unavailable,
+    .temporaryLockout => .lockedOut,
+    .biometricLockout => .permanentlyLockedOut,
+    _ => .failed,
+  };
 }

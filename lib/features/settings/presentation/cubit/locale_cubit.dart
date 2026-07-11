@@ -25,6 +25,6 @@ final class LocaleCubit extends Cubit<Locale?> {
 
   static Locale? _restore(KeyValueStorage storage) {
     final saved = storage.getString(StorageKeys.locale);
-    return saved == null ? null : Locale(saved);
+    return saved == null ? null : .new(saved);
   }
 }

@@ -6,7 +6,6 @@ import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
-import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:bedrock/shared/animations/app_motion.dart';
 import 'package:bedrock/shared/animations/fade_slide_in.dart';
 import 'package:bedrock/shared/widgets/adaptive/adaptive_dialogs.dart';
@@ -36,6 +35,21 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final l10n = context.l10n;
+    final sessionBloc = context.read<SessionBloc>();
+    final confirmed = await showConfirmDialog(
+      context,
+      title: l10n.signOutConfirmTitle,
+      message: l10n.signOutConfirmMessage,
+      confirmLabel: l10n.signOutButton,
+      destructive: true,
+    );
+    if (confirmed) {
+      sessionBloc.add(const SessionSignOutRequested());
+    }
   }
 
   List<Widget> _sections(BuildContext context, AppLocalizations l10n) {
@@ -68,90 +82,12 @@ class SettingsPage extends StatelessWidget {
           leading: Icon(Icons.logout, color: context.colorScheme.error),
           title: Text(
             l10n.signOutButton,
-            style: TextStyle(color: context.colorScheme.error),
+            style: .new(color: context.colorScheme.error),
           ),
           onTap: () => _confirmSignOut(context),
         ),
       ),
     ];
-  }
-
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final l10n = context.l10n;
-    final sessionBloc = context.read<SessionBloc>();
-    final confirmed = await showConfirmDialog(
-      context,
-      title: l10n.signOutConfirmTitle,
-      message: l10n.signOutConfirmMessage,
-      confirmLabel: l10n.signOutButton,
-      destructive: true,
-    );
-    if (confirmed) {
-      sessionBloc.add(const SessionSignOutRequested());
-    }
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 8),
-      child: Text(
-        title,
-        style: context.textTheme.titleSmall?.copyWith(
-          color: context.colorScheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _ThemeModeSelector extends StatelessWidget {
-  const _ThemeModeSelector();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, mode) {
-        return MenuAnchor(
-          builder: (context, controller, child) {
-            return TextButton.icon(
-              onPressed: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
-              icon: const Icon(Icons.arrow_drop_down),
-              label: Text(switch (mode) {
-                ThemeMode.system => l10n.themeSystem,
-                ThemeMode.light => l10n.themeLight,
-                ThemeMode.dark => l10n.themeDark,
-              }),
-            );
-          },
-          menuChildren: [
-            for (final option in ThemeMode.values)
-              MenuItemButton(
-                onPressed: () => context.read<ThemeCubit>().setMode(option),
-                leadingIcon: Icon(
-                  mode == option ? Icons.check : null,
-                  size: 18,
-                ),
-                child: Text(switch (option) {
-                  ThemeMode.system => l10n.themeSystem,
-                  ThemeMode.light => l10n.themeLight,
-                  ThemeMode.dark => l10n.themeDark,
-                }),
-              ),
-          ],
-        );
-      },
-    );
   }
 }
 
@@ -190,14 +126,14 @@ class _BiometricLockTile extends StatelessWidget {
         : await cubit.disable(l10n.biometricPromptReason);
 
     final rejected =
-        result == BiometricAuthResult.unavailable ||
-        result == BiometricAuthResult.notEnrolled ||
-        result == BiometricAuthResult.permanentlyLockedOut;
+        result == .unavailable ||
+        result == .notEnrolled ||
+        result == .permanentlyLockedOut;
     if (rejected && context.mounted) {
       showAppSnackBar(
         context,
         l10n.biometricsUnavailableMessage,
-        kind: SnackBarKind.error,
+        kind: .error,
       );
     }
   }
@@ -233,7 +169,7 @@ class _LocaleSelector extends StatelessWidget {
             ),
             MenuItemButton(
               onPressed: () =>
-                  context.read<LocaleCubit>().setLocale(const Locale('en')),
+                  context.read<LocaleCubit>().setLocale(const .new('en')),
               leadingIcon: Icon(
                 locale?.languageCode == 'en' ? Icons.check : null,
                 size: 18,
@@ -242,13 +178,74 @@ class _LocaleSelector extends StatelessWidget {
             ),
             MenuItemButton(
               onPressed: () =>
-                  context.read<LocaleCubit>().setLocale(const Locale('fr')),
+                  context.read<LocaleCubit>().setLocale(const .new('fr')),
               leadingIcon: Icon(
                 locale?.languageCode == 'fr' ? Icons.check : null,
                 size: 18,
               ),
               child: Text(l10n.languageFrench),
             ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(left: 16, bottom: 8),
+    child: Text(
+      title,
+      style: context.textTheme.titleSmall?.copyWith(
+        color: context.colorScheme.primary,
+        fontWeight: .w600,
+      ),
+    ),
+  );
+}
+
+class _ThemeModeSelector extends StatelessWidget {
+  const _ThemeModeSelector();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, mode) {
+        return MenuAnchor(
+          builder: (context, controller, child) {
+            return TextButton.icon(
+              onPressed: () =>
+                  controller.isOpen ? controller.close() : controller.open(),
+              icon: const Icon(Icons.arrow_drop_down),
+              label: Text(switch (mode) {
+                .system => l10n.themeSystem,
+                .light => l10n.themeLight,
+                .dark => l10n.themeDark,
+              }),
+            );
+          },
+          menuChildren: [
+            for (final option in ThemeMode.values)
+              MenuItemButton(
+                onPressed: () => context.read<ThemeCubit>().setMode(option),
+                leadingIcon: Icon(
+                  mode == option ? Icons.check : null,
+                  size: 18,
+                ),
+                child: Text(switch (option) {
+                  .system => l10n.themeSystem,
+                  .light => l10n.themeLight,
+                  .dark => l10n.themeDark,
+                }),
+              ),
           ],
         );
       },

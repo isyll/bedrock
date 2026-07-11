@@ -18,6 +18,55 @@ class _LockScreenState extends State<LockScreen> {
   bool _authenticating = false;
 
   @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: ConstrainedBox(
+              constraints: const .new(maxWidth: 360),
+              child: StaggeredColumn(
+                mainAxisSize: .min,
+                crossAxisAlignment: .stretch,
+                children: [
+                  Icon(
+                    Icons.fingerprint,
+                    size: 72,
+                    color: context.colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.lockedTitle,
+                    style: context.textTheme.headlineSmall,
+                    textAlign: .center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.lockedMessage,
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: .center,
+                  ),
+                  const SizedBox(height: 32),
+                  AppButton(
+                    label: l10n.unlockButton,
+                    loading: _authenticating,
+                    onPressed: _unlock,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_unlock()));
@@ -33,54 +82,5 @@ class _LockScreenState extends State<LockScreen> {
 
     if (!mounted) return;
     setState(() => _authenticating = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 360),
-              child: StaggeredColumn(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Icon(
-                    Icons.fingerprint,
-                    size: 72,
-                    color: context.colorScheme.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.lockedTitle,
-                    style: context.textTheme.headlineSmall,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.lockedMessage,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: context.colorScheme.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  AppButton(
-                    label: l10n.unlockButton,
-                    loading: _authenticating,
-                    onPressed: _unlock,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

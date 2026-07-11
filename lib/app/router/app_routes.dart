@@ -3,7 +3,7 @@ abstract final class AppRoutes {
   static const signIn = '/sign-in';
   static const settings = '/settings';
 
-  static const Set<String> publicPaths = {signIn};
+  static const publicPaths = <String>{signIn};
 
   static bool isPublic(String location) {
     final path = Uri.parse(location).path;

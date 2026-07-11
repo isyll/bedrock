@@ -20,11 +20,6 @@ class TapScale extends StatefulWidget {
 class _TapScaleState extends State<TapScale> {
   bool _pressed = false;
 
-  void _setPressed(bool value) {
-    if (!widget.enabled || _pressed == value) return;
-    setState(() => _pressed = value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Listener(
@@ -38,5 +33,10 @@ class _TapScaleState extends State<TapScale> {
         child: widget.child,
       ),
     );
+  }
+
+  void _setPressed(bool value) {
+    if (!widget.enabled || _pressed == value) return;
+    setState(() => _pressed = value);
   }
 }

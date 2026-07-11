@@ -15,8 +15,7 @@ Future<bool> showConfirmDialog(
     context: context,
     builder: (dialogContext) {
       final platform = Theme.of(dialogContext).platform;
-      final isCupertino =
-          platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+      final isCupertino = platform == .iOS || platform == .macOS;
 
       final cancelAction = isCupertino
           ? CupertinoDialogAction(

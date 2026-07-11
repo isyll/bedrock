@@ -14,6 +14,8 @@ final class ApiClient {
 
   final Dio dio;
 
+  void close() => dio.close();
+
   Future<Result<T>> run<T>(Future<T> Function(Dio dio) action) async {
     try {
       return Result.success(await action(dio));
@@ -31,8 +33,6 @@ final class ApiClient {
       );
     }
   }
-
-  void close() => dio.close();
 }
 
 final class ApiClientFactory {
@@ -76,23 +76,21 @@ final class ApiClientFactory {
       if (kDebugMode) const LoggingInterceptor(),
     ]);
 
-    return ApiClient(dio);
+    return .new(dio);
   }
 
   Dio _bareDio({
     required String baseUrl,
     required Duration timeout,
     required Map<String, String> headers,
-  }) {
-    return Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 15),
-        sendTimeout: timeout,
-        receiveTimeout: timeout,
-        receiveDataWhenStatusError: true,
-        headers: {'Accept': 'application/json', ...headers},
-      ),
-    );
-  }
+  }) => .new(
+    .new(
+      baseUrl: baseUrl,
+      connectTimeout: const .new(seconds: 15),
+      sendTimeout: timeout,
+      receiveTimeout: timeout,
+      receiveDataWhenStatusError: true,
+      headers: {'Accept': 'application/json', ...headers},
+    ),
+  );
 }

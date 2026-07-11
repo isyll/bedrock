@@ -13,15 +13,9 @@ class AppLockGate extends StatefulWidget {
 }
 
 class _AppLockGateState extends State<AppLockGate> {
-  late final AppLifecycleListener _lifecycleListener = AppLifecycleListener(
+  late final _lifecycleListener = AppLifecycleListener(
     onHide: () => context.read<AppLockCubit>().lock(),
   );
-
-  @override
-  void dispose() {
-    _lifecycleListener.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +24,17 @@ class _AppLockGateState extends State<AppLockGate> {
     );
 
     return Stack(
-      fit: StackFit.expand,
+      fit: .expand,
       children: [
         widget.child,
         if (isLocked) const LockScreen(),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
   }
 }

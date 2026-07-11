@@ -8,9 +8,7 @@ import '../../helpers/fakes.dart';
 void main() {
   late InMemoryKeyValueStorage storage;
 
-  setUp(() {
-    storage = InMemoryKeyValueStorage();
-  });
+  setUp(() => storage = .new());
 
   test('defaults to system when nothing is stored', () {
     final cubit = ThemeCubit(storage: storage);
@@ -41,7 +39,7 @@ void main() {
     final cubit = ThemeCubit(storage: storage);
     addTearDown(cubit.close);
 
-    await cubit.setMode(ThemeMode.light);
+    await cubit.setMode(.light);
 
     expect(cubit.state, ThemeMode.light);
     expect(storage.getString(StorageKeys.themeMode), 'light');

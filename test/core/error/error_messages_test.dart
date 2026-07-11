@@ -10,11 +10,11 @@ void main() {
     test('maps network failures by kind', () {
       const timeout = NetworkException(
         'timed out',
-        kind: NetworkFailureKind.timeout,
+        kind: .timeout,
       );
       const offline = NetworkException(
         'offline',
-        kind: NetworkFailureKind.offline,
+        kind: .offline,
       );
 
       expect(timeout.localizedMessage(l10n), l10n.errorTimeoutMessage);

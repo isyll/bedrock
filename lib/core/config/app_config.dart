@@ -1,21 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 
-enum AppFlavor { dev, prod }
-
-final class AuthEndpoints {
-  const AuthEndpoints({
-    this.signIn = '/auth/login',
-    this.refresh = '/auth/refresh',
-    this.signOut = '/auth/logout',
-    this.profile = '/me',
-  });
-
-  final String signIn;
-  final String refresh;
-  final String signOut;
-  final String profile;
-}
-
 final class AppConfig {
   const AppConfig({
     required this.flavor,
@@ -37,7 +21,23 @@ final class AppConfig {
   final String deepLinkHost;
   final bool useFakeAuth;
 
-  bool get isDev => flavor == AppFlavor.dev;
-  bool get isProd => flavor == AppFlavor.prod;
   bool get firebaseEnabled => firebaseOptions != null;
+  bool get isDev => flavor == .dev;
+  bool get isProd => flavor == .prod;
+}
+
+enum AppFlavor { dev, prod }
+
+final class AuthEndpoints {
+  const AuthEndpoints({
+    this.signIn = '/auth/login',
+    this.refresh = '/auth/refresh',
+    this.signOut = '/auth/logout',
+    this.profile = '/me',
+  });
+
+  final String signIn;
+  final String refresh;
+  final String signOut;
+  final String profile;
 }

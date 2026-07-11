@@ -8,8 +8,6 @@ import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:dio/dio.dart';
 
-enum SessionStatus { unknown, active, none }
-
 final class SessionManager {
   SessionManager({
     required AppConfig config,
@@ -20,11 +18,11 @@ final class SessionManager {
   }) : _config = config,
        _tokenClient =
            tokenClient ??
-           Dio(
-             BaseOptions(
+           .new(
+             .new(
                baseUrl: config.apiBaseUrl,
-               connectTimeout: const Duration(seconds: 15),
-               receiveTimeout: const Duration(seconds: 20),
+               connectTimeout: const .new(seconds: 15),
+               receiveTimeout: const .new(seconds: 20),
                headers: const {'Accept': 'application/json'},
              ),
            ) {
@@ -39,12 +37,8 @@ final class SessionManager {
   final _statusController = StreamController<SessionStatus>.broadcast();
 
   AuthTokens? _tokens;
-  SessionStatus _status = SessionStatus.unknown;
+  SessionStatus _status = .unknown;
   Future<String?>? _pendingRefresh;
-
-  SessionStatus get status => _status;
-
-  Stream<SessionStatus> get statusStream => _statusController.stream;
 
   String? get accessToken => _tokens?.accessToken;
 
@@ -53,13 +47,29 @@ final class SessionManager {
     return tokens != null && !tokens.isExpired;
   }
 
-  Future<String?> validAccessToken() {
-    final tokens = _tokens;
-    if (tokens == null) return Future.value();
-    if (!tokens.isExpired) return Future.value(tokens.accessToken);
+  SessionStatus get status => _status;
 
-    _logger.debug('Access token expired, refreshing before request');
-    return refreshAccessToken();
+  Stream<SessionStatus> get statusStream => _statusController.stream;
+
+  void dispose() => unawaited(_statusController.close());
+
+  Future<void> end() async {
+    _tokens = null;
+    await _storage.delete(StorageKeys.accessToken);
+    await _storage.delete(StorageKeys.refreshToken);
+    await _storage.delete(StorageKeys.accessTokenExpiry);
+    _setStatus(.none);
+  }
+
+  Future<String?> refreshAccessToken() {
+    final pending = _pendingRefresh;
+    if (pending != null) return pending;
+
+    final refresh = _performRefresh().whenComplete(
+      () => _pendingRefresh = null,
+    );
+    _pendingRefresh = refresh;
+    return refresh;
   }
 
   Future<void> restore() async {
@@ -67,42 +77,32 @@ final class SessionManager {
     final refreshToken = await _storage.read(StorageKeys.refreshToken);
 
     if (accessToken == null || refreshToken == null) {
-      _setStatus(SessionStatus.none);
+      _setStatus(.none);
       return;
     }
 
     final expiryRaw = await _storage.read(StorageKeys.accessTokenExpiry);
-    _tokens = AuthTokens(
+    _tokens = .new(
       accessToken: accessToken,
       refreshToken: refreshToken,
-      expiresAt: expiryRaw == null ? null : DateTime.tryParse(expiryRaw),
+      expiresAt: expiryRaw == null ? null : .tryParse(expiryRaw),
     );
-    _setStatus(SessionStatus.active);
+    _setStatus(.active);
   }
 
   Future<void> start(AuthTokens tokens) async {
     _tokens = tokens;
     await _persist(tokens);
-    _setStatus(SessionStatus.active);
+    _setStatus(.active);
   }
 
-  Future<void> end() async {
-    _tokens = null;
-    await _storage.delete(StorageKeys.accessToken);
-    await _storage.delete(StorageKeys.refreshToken);
-    await _storage.delete(StorageKeys.accessTokenExpiry);
-    _setStatus(SessionStatus.none);
-  }
+  Future<String?> validAccessToken() {
+    final tokens = _tokens;
+    if (tokens == null) return .value();
+    if (!tokens.isExpired) return .value(tokens.accessToken);
 
-  Future<String?> refreshAccessToken() {
-    final pending = _pendingRefresh;
-    if (pending != null) return pending;
-
-    final refresh = _performRefresh().whenComplete(() {
-      _pendingRefresh = null;
-    });
-    _pendingRefresh = refresh;
-    return refresh;
+    _logger.debug('Access token expired, refreshing before request');
+    return refreshAccessToken();
   }
 
   Future<String?> _performRefresh() async {
@@ -163,8 +163,6 @@ final class SessionManager {
     _status = value;
     _statusController.add(value);
   }
-
-  void dispose() {
-    unawaited(_statusController.close());
-  }
 }
+
+enum SessionStatus { unknown, active, none }

@@ -9,9 +9,7 @@ import '../../helpers/fakes.dart';
 void main() {
   late InMemoryKeyValueStorage storage;
 
-  setUp(() {
-    storage = InMemoryKeyValueStorage();
-  });
+  setUp(() => storage = .new());
 
   test('defaults to the system locale when nothing is stored', () {
     final cubit = LocaleCubit(storage: storage);
@@ -35,7 +33,7 @@ void main() {
     final cubit = LocaleCubit(storage: storage);
     addTearDown(cubit.close);
 
-    await cubit.setLocale(const Locale('en'));
+    await cubit.setLocale(const .new('en'));
 
     expect(cubit.state, const Locale('en'));
     expect(storage.getString(StorageKeys.locale), 'en');

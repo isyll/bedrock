@@ -7,13 +7,37 @@ class SecureStorage {
   const SecureStorage({this._logger = const AppLogger('SecureStorage')});
 
   static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(migrateWithBackup: true),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock_this_device,
+    aOptions: .new(migrateWithBackup: true),
+    iOptions: .new(
+      accessibility: .first_unlock_this_device,
     ),
   );
 
   final AppLogger _logger;
+
+  Future<bool> containsKey(String key) async {
+    try {
+      return await _storage.containsKey(key: key);
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  Future<void> delete(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } on PlatformException catch (error) {
+      _logger.warning('Failed to delete secure value for $key', error);
+    }
+  }
+
+  Future<void> deleteAll() async {
+    try {
+      await _storage.deleteAll();
+    } on PlatformException catch (error) {
+      _logger.warning('Failed to clear secure storage', error);
+    }
+  }
 
   Future<String?> read(String key) async {
     try {
@@ -34,30 +58,6 @@ class SecureStorage {
         stackTrace,
       );
       throw const StorageException('Failed to persist a secure value');
-    }
-  }
-
-  Future<void> delete(String key) async {
-    try {
-      await _storage.delete(key: key);
-    } on PlatformException catch (error) {
-      _logger.warning('Failed to delete secure value for $key', error);
-    }
-  }
-
-  Future<bool> containsKey(String key) async {
-    try {
-      return await _storage.containsKey(key: key);
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  Future<void> deleteAll() async {
-    try {
-      await _storage.deleteAll();
-    } on PlatformException catch (error) {
-      _logger.warning('Failed to clear secure storage', error);
     }
   }
 }

@@ -18,11 +18,41 @@ final class AppLockCubit extends Cubit<AppLockState> {
   final KeyValueStorage _storage;
   final BiometricsService _biometrics;
 
-  static AppLockState _restore(KeyValueStorage storage) {
-    final enabled = storage.getBool(StorageKeys.biometricLock) ?? false;
-    return AppLockState(
-      status: enabled ? AppLockStatus.locked : AppLockStatus.disabled,
-    );
+  Future<BiometricAuthResult> disable(String reason) async {
+    if (!state.isEnabled) return .success;
+
+    final result = await _biometrics.authenticate(reason: reason);
+    if (result.isSuccess) {
+      await _storage.remove(StorageKeys.biometricLock);
+      emit(state.copyWith(status: .disabled));
+    }
+    return result;
+  }
+
+  Future<BiometricAuthResult> enable(String reason) async {
+    if (!state.biometricsSupported) return .unavailable;
+
+    final result = await _biometrics.authenticate(reason: reason);
+    if (result.isSuccess) {
+      await _storage.setBool(StorageKeys.biometricLock, value: true);
+      emit(state.copyWith(status: .unlocked));
+    }
+    return result;
+  }
+
+  void lock() {
+    if (state.status != .unlocked) return;
+    emit(state.copyWith(status: .locked));
+  }
+
+  Future<BiometricAuthResult> unlock(String reason) async {
+    if (!state.isLocked) return .success;
+
+    final result = await _biometrics.authenticate(reason: reason);
+    if (result.isSuccess) {
+      emit(state.copyWith(status: .unlocked));
+    }
+    return result;
   }
 
   Future<void> _refreshSupport() async {
@@ -30,44 +60,14 @@ final class AppLockCubit extends Cubit<AppLockState> {
     if (isClosed) return;
     emit(state.copyWith(biometricsSupported: supported));
     if (!supported && state.isLocked) {
-      emit(state.copyWith(status: AppLockStatus.unlocked));
+      emit(state.copyWith(status: .unlocked));
     }
   }
 
-  Future<BiometricAuthResult> enable(String reason) async {
-    if (!state.biometricsSupported) return BiometricAuthResult.unavailable;
-
-    final result = await _biometrics.authenticate(reason: reason);
-    if (result.isSuccess) {
-      await _storage.setBool(StorageKeys.biometricLock, value: true);
-      emit(state.copyWith(status: AppLockStatus.unlocked));
-    }
-    return result;
-  }
-
-  Future<BiometricAuthResult> disable(String reason) async {
-    if (!state.isEnabled) return BiometricAuthResult.success;
-
-    final result = await _biometrics.authenticate(reason: reason);
-    if (result.isSuccess) {
-      await _storage.remove(StorageKeys.biometricLock);
-      emit(state.copyWith(status: AppLockStatus.disabled));
-    }
-    return result;
-  }
-
-  void lock() {
-    if (state.status != AppLockStatus.unlocked) return;
-    emit(state.copyWith(status: AppLockStatus.locked));
-  }
-
-  Future<BiometricAuthResult> unlock(String reason) async {
-    if (!state.isLocked) return BiometricAuthResult.success;
-
-    final result = await _biometrics.authenticate(reason: reason);
-    if (result.isSuccess) {
-      emit(state.copyWith(status: AppLockStatus.unlocked));
-    }
-    return result;
+  static AppLockState _restore(KeyValueStorage storage) {
+    final enabled = storage.getBool(StorageKeys.biometricLock) ?? false;
+    return .new(
+      status: enabled ? .locked : .disabled,
+    );
   }
 }

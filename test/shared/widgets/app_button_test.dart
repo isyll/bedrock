@@ -8,19 +8,17 @@ void main() {
     WidgetTester tester, {
     required VoidCallback? onPressed,
     bool loading = false,
-  }) {
-    return tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: AppButton(
-            label: 'Continue',
-            onPressed: onPressed,
-            loading: loading,
-          ),
+  }) => tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: AppButton(
+          label: 'Continue',
+          onPressed: onPressed,
+          loading: loading,
         ),
       ),
-    );
-  }
+    ),
+  );
 
   testWidgets('renders its label and reacts to taps', (tester) async {
     var pressed = false;

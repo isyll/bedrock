@@ -13,6 +13,19 @@ final class LoggingInterceptor extends Interceptor {
   final AppLogger _logger;
 
   @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final options = err.requestOptions;
+    final status = err.response?.statusCode?.toString() ?? err.type.name;
+    _logger.warning(
+      _compose([
+        '← $status ${options.method} ${options.uri}${_elapsed(options)}',
+        _formatBody(err.response?.data),
+      ]),
+    );
+    handler.next(err);
+  }
+
+  @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     options.extra[_startedAtKey] = DateTime.now();
     _logger.debug(
@@ -38,19 +51,6 @@ final class LoggingInterceptor extends Interceptor {
     handler.next(response);
   }
 
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    final options = err.requestOptions;
-    final status = err.response?.statusCode?.toString() ?? err.type.name;
-    _logger.warning(
-      _compose([
-        '← $status ${options.method} ${options.uri}${_elapsed(options)}',
-        _formatBody(err.response?.data),
-      ]),
-    );
-    handler.next(err);
-  }
-
   String _compose(List<String> sections) =>
       sections.where((section) => section.isNotEmpty).join('\n');
 
@@ -58,17 +58,6 @@ final class LoggingInterceptor extends Interceptor {
     final startedAt = options.extra[_startedAtKey];
     if (startedAt is! DateTime) return '';
     return ' (${DateTime.now().difference(startedAt).inMilliseconds}ms)';
-  }
-
-  String _formatHeaders(Map<String, Object?> headers) {
-    if (headers.isEmpty) return '';
-    final lines = headers.entries.map((entry) {
-      final value = _redactedHeaders.contains(entry.key.toLowerCase())
-          ? '***'
-          : entry.value;
-      return '  ${entry.key}: $value';
-    });
-    return 'headers:\n${lines.join('\n')}';
   }
 
   String _formatBody(Object? body) {
@@ -85,12 +74,15 @@ final class LoggingInterceptor extends Interceptor {
     return 'body:\n${_truncate(rendered)}';
   }
 
-  String _prettyText(String text) {
-    try {
-      return _prettyJson(jsonDecode(text));
-    } on FormatException {
-      return text;
-    }
+  String _formatHeaders(Map<String, Object?> headers) {
+    if (headers.isEmpty) return '';
+    final lines = headers.entries.map((entry) {
+      final value = _redactedHeaders.contains(entry.key.toLowerCase())
+          ? '***'
+          : entry.value;
+      return '  ${entry.key}: $value';
+    });
+    return 'headers:\n${lines.join('\n')}';
   }
 
   String _prettyJson(Object? value) {
@@ -98,6 +90,14 @@ final class LoggingInterceptor extends Interceptor {
       return const JsonEncoder.withIndent('  ').convert(value);
     } on Object {
       return value.toString();
+    }
+  }
+
+  String _prettyText(String text) {
+    try {
+      return _prettyJson(jsonDecode(text));
+    } on FormatException {
+      return text;
     }
   }
 

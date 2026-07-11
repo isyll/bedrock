@@ -10,12 +10,11 @@ void main() {
   late FakeBiometricsService biometrics;
 
   setUp(() {
-    storage = InMemoryKeyValueStorage();
-    biometrics = FakeBiometricsService();
+    storage = .new();
+    biometrics = .new();
   });
 
-  AppLockCubit buildCubit() =>
-      AppLockCubit(storage: storage, biometrics: biometrics);
+  AppLockCubit buildCubit() => .new(storage: storage, biometrics: biometrics);
 
   test('starts disabled and discovers biometric support', () async {
     final cubit = buildCubit();
@@ -75,7 +74,7 @@ void main() {
   });
 
   test('enable keeps the lock off when authentication fails', () async {
-    biometrics.authResult = BiometricAuthResult.failed;
+    biometrics.authResult = .failed;
     final cubit = buildCubit();
     addTearDown(cubit.close);
     await pumpEventQueue();
@@ -89,7 +88,7 @@ void main() {
 
   test('unlock succeeds only after authentication', () async {
     storage.values[StorageKeys.biometricLock] = true;
-    biometrics.authResult = BiometricAuthResult.failed;
+    biometrics.authResult = .failed;
     final cubit = buildCubit();
     addTearDown(cubit.close);
     await pumpEventQueue();
@@ -97,7 +96,7 @@ void main() {
     expect(await cubit.unlock('reason'), BiometricAuthResult.failed);
     expect(cubit.state.isLocked, isTrue);
 
-    biometrics.authResult = BiometricAuthResult.success;
+    biometrics.authResult = .success;
     expect(await cubit.unlock('reason'), BiometricAuthResult.success);
     expect(cubit.state.status, AppLockStatus.unlocked);
   });

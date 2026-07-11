@@ -6,13 +6,6 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-final class PickedFile {
-  const PickedFile({required this.path, required this.name});
-
-  final String path;
-  final String name;
-}
-
 final class MediaPickerService {
   MediaPickerService({required this._permissions});
 
@@ -20,12 +13,33 @@ final class MediaPickerService {
   static const _defaultMaxDimension = 2048.0;
 
   final PermissionsService _permissions;
-  final ImagePicker _imagePicker = ImagePicker();
+  final _imagePicker = ImagePicker();
+
+  Future<Result<PickedFile?>> pickFile({
+    List<XTypeGroup> typeGroups = const [],
+  }) {
+    return _guarded(() async {
+      final file = await openFile(acceptedTypeGroups: typeGroups);
+      if (file == null) return null;
+      return PickedFile(path: file.path, name: file.name);
+    });
+  }
+
+  Future<Result<List<PickedFile>>> pickFiles({
+    List<XTypeGroup> typeGroups = const [],
+  }) {
+    return _guarded(() async {
+      final files = await openFiles(acceptedTypeGroups: typeGroups);
+      return files
+          .map((file) => PickedFile(path: file.path, name: file.name))
+          .toList();
+    });
+  }
 
   Future<Result<PickedFile?>> pickImageFromGallery() {
     return _guarded(() async {
       final file = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
+        source: .gallery,
         imageQuality: _defaultImageQuality,
         maxWidth: _defaultMaxDimension,
         maxHeight: _defaultMaxDimension,
@@ -52,9 +66,9 @@ final class MediaPickerService {
     CameraDevice preferredCamera = CameraDevice.rear,
   }) {
     return _guarded(() async {
-      await _ensurePermission(AppPermission.camera);
+      await _ensurePermission(.camera);
       final file = await _imagePicker.pickImage(
-        source: ImageSource.camera,
+        source: .camera,
         preferredCameraDevice: preferredCamera,
         imageQuality: _defaultImageQuality,
         maxWidth: _defaultMaxDimension,
@@ -64,39 +78,13 @@ final class MediaPickerService {
     });
   }
 
-  Future<Result<PickedFile?>> pickFile({
-    List<XTypeGroup> typeGroups = const [],
-  }) {
-    return _guarded(() async {
-      final file = await openFile(acceptedTypeGroups: typeGroups);
-      if (file == null) return null;
-      return PickedFile(path: file.path, name: file.name);
-    });
-  }
-
-  Future<Result<List<PickedFile>>> pickFiles({
-    List<XTypeGroup> typeGroups = const [],
-  }) {
-    return _guarded(() async {
-      final files = await openFiles(acceptedTypeGroups: typeGroups);
-      return files
-          .map((file) => PickedFile(path: file.path, name: file.name))
-          .toList();
-    });
-  }
-
   Future<void> _ensurePermission(AppPermission permission) async {
     final result = await _permissions.ensure(permission);
     if (result.isUsable) return;
     throw PermissionException(
       'Missing ${permission.name} permission',
-      permanentlyDenied: result == PermissionResult.permanentlyDenied,
+      permanentlyDenied: result == .permanentlyDenied,
     );
-  }
-
-  PickedFile? _toPickedFile(XFile? file) {
-    if (file == null) return null;
-    return PickedFile(path: file.path, name: file.name);
   }
 
   Future<Result<T>> _guarded<T>(Future<T> Function() action) async {
@@ -114,4 +102,16 @@ final class MediaPickerService {
       );
     }
   }
+
+  PickedFile? _toPickedFile(XFile? file) {
+    if (file == null) return null;
+    return .new(path: file.path, name: file.name);
+  }
+}
+
+final class PickedFile {
+  const PickedFile({required this.path, required this.name});
+
+  final String path;
+  final String name;
 }

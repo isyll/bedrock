@@ -16,17 +16,15 @@ class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<SessionBloc>.value(value: getIt()),
-        BlocProvider<ThemeCubit>.value(value: getIt()),
-        BlocProvider<LocaleCubit>.value(value: getIt()),
-        BlocProvider<AppLockCubit>.value(value: getIt()),
-      ],
-      child: const AppView(),
-    );
-  }
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider<SessionBloc>.value(value: getIt()),
+      BlocProvider<ThemeCubit>.value(value: getIt()),
+      BlocProvider<LocaleCubit>.value(value: getIt()),
+      BlocProvider<AppLockCubit>.value(value: getIt()),
+    ],
+    child: const AppView(),
+  );
 }
 
 class AppView extends StatelessWidget {
@@ -51,13 +49,11 @@ class AppView extends StatelessWidget {
         return BlocListener<SessionBloc, SessionState>(
           listenWhen: (previous, current) =>
               current.expired && !previous.expired,
-          listener: (context, state) {
-            showAppSnackBar(
-              context,
-              context.l10n.sessionExpiredMessage,
-              kind: SnackBarKind.error,
-            );
-          },
+          listener: (context, state) => showAppSnackBar(
+            context,
+            context.l10n.sessionExpiredMessage,
+            kind: .error,
+          ),
           child: AppLockGate(
             child: MediaQuery.withClampedTextScaling(
               maxScaleFactor: 2,

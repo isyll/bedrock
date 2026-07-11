@@ -37,7 +37,17 @@ final class AuthTokens extends Equatable {
   final String refreshToken;
   final DateTime? expiresAt;
 
-  bool get isExpired => expiresWithin(Duration.zero);
+  bool get isExpired => expiresWithin(.zero);
+
+  @override
+  List<Object?> get props => [accessToken, refreshToken, expiresAt];
+
+  Duration? get timeUntilExpiry {
+    final expiry = expiresAt;
+    if (expiry == null) return null;
+    final remaining = expiry.difference(.now().toUtc());
+    return remaining.isNegative ? .zero : remaining;
+  }
 
   bool expiresWithin(Duration duration) {
     final expiry = expiresAt;
@@ -46,11 +56,20 @@ final class AuthTokens extends Equatable {
     return !DateTime.now().toUtc().isBefore(threshold);
   }
 
-  Duration? get timeUntilExpiry {
-    final expiry = expiresAt;
-    if (expiry == null) return null;
-    final remaining = expiry.difference(DateTime.now().toUtc());
-    return remaining.isNegative ? Duration.zero : remaining;
+  static DateTime? parseExpiry(Map<String, dynamic> json) {
+    final expiresAt = json['expires_at'] ?? json['expired_at'];
+    switch (expiresAt) {
+      case final String value:
+        return .tryParse(value)?.toUtc();
+      case final num value:
+        return _epochToDateTime(value);
+    }
+
+    final expiresIn = json['expires_in'];
+    if (expiresIn is num) {
+      return .now().toUtc().add(.new(seconds: expiresIn.toInt()));
+    }
+    return null;
   }
 
   static Map<String, dynamic> unwrapPayload(Map<String, dynamic> json) {
@@ -60,30 +79,11 @@ final class AuthTokens extends Equatable {
     return json;
   }
 
-  static DateTime? parseExpiry(Map<String, dynamic> json) {
-    final expiresAt = json['expires_at'] ?? json['expired_at'];
-    switch (expiresAt) {
-      case final String value:
-        return DateTime.tryParse(value)?.toUtc();
-      case final num value:
-        return _epochToDateTime(value);
-    }
-
-    final expiresIn = json['expires_in'];
-    if (expiresIn is num) {
-      return DateTime.now().toUtc().add(Duration(seconds: expiresIn.toInt()));
-    }
-    return null;
-  }
-
   static DateTime _epochToDateTime(num value) {
     const millisThreshold = 100000000000;
     final millis = value >= millisThreshold
         ? value.toInt()
         : value.toInt() * 1000;
-    return DateTime.fromMillisecondsSinceEpoch(millis, isUtc: true);
+    return .fromMillisecondsSinceEpoch(millis, isUtc: true);
   }
-
-  @override
-  List<Object?> get props => [accessToken, refreshToken, expiresAt];
 }

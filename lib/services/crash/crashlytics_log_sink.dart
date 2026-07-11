@@ -7,11 +7,11 @@ final class CrashlyticsLogSink implements LogSink {
   final CrashReporter _reporter;
 
   @override
-  LogLevel get minimumLevel => LogLevel.info;
+  LogLevel get minimumLevel => .info;
 
   @override
   void write(LogRecord record) {
-    if (record.level.atLeast(LogLevel.error)) {
+    if (record.level.atLeast(.error)) {
       _reporter.recordError(
         record.error ?? record.message,
         record.stackTrace,

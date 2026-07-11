@@ -6,27 +6,25 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final options = RequestOptions(path: '/things');
 
-  DioException responseError(int statusCode, Object? body) {
-    return DioException(
+  DioException responseError(int statusCode, Object? body) => .new(
+    requestOptions: options,
+    type: .badResponse,
+    response: Response<Object?>(
       requestOptions: options,
-      type: DioExceptionType.badResponse,
-      response: Response<Object?>(
-        requestOptions: options,
-        statusCode: statusCode,
-        data: body,
-      ),
-    );
-  }
+      statusCode: statusCode,
+      data: body,
+    ),
+  );
 
   group('mapDioException', () {
     test('maps timeouts to a timeout NetworkException', () {
-      for (final type in [
-        DioExceptionType.connectionTimeout,
-        DioExceptionType.sendTimeout,
-        DioExceptionType.receiveTimeout,
+      for (final type in <DioExceptionType>[
+        .connectionTimeout,
+        .sendTimeout,
+        .receiveTimeout,
       ]) {
         final mapped = mapDioException(
-          DioException(requestOptions: options, type: type),
+          .new(requestOptions: options, type: type),
         );
 
         expect(mapped, isA<NetworkException>());
@@ -39,9 +37,9 @@ void main() {
 
     test('maps connection errors to an offline NetworkException', () {
       final mapped = mapDioException(
-        DioException(
+        .new(
           requestOptions: options,
-          type: DioExceptionType.connectionError,
+          type: .connectionError,
         ),
       );
 
@@ -50,12 +48,12 @@ void main() {
 
     test('maps cancellation and bad certificates', () {
       final cancelled = mapDioException(
-        DioException(requestOptions: options, type: DioExceptionType.cancel),
+        .new(requestOptions: options, type: .cancel),
       );
       final badCertificate = mapDioException(
-        DioException(
+        .new(
           requestOptions: options,
-          type: DioExceptionType.badCertificate,
+          type: .badCertificate,
         ),
       );
 
@@ -126,7 +124,7 @@ void main() {
 
     test('maps unknown errors to UnexpectedException', () {
       final mapped = mapDioException(
-        DioException(requestOptions: options, message: 'socket closed'),
+        .new(requestOptions: options, message: 'socket closed'),
       );
 
       expect(mapped, isA<UnexpectedException>());

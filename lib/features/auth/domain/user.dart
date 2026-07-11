@@ -28,13 +28,13 @@ final class User extends Equatable {
     return email;
   }
 
+  @override
+  List<Object?> get props => [id, email, name, avatarUrl];
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'email': email,
     'name': name,
     'avatar_url': avatarUrl,
   };
-
-  @override
-  List<Object?> get props => [id, email, name, avatarUrl];
 }

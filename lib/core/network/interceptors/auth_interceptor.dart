@@ -11,22 +11,6 @@ final class AuthInterceptor extends Interceptor {
   final Dio _retryClient;
 
   @override
-  Future<void> onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
-    if (options.extra[skipAuthKey] == true) {
-      return handler.next(options);
-    }
-
-    final token = await _session.validAccessToken();
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-    handler.next(options);
-  }
-
-  @override
   Future<void> onError(
     DioException err,
     ErrorInterceptorHandler handler,
@@ -36,7 +20,7 @@ final class AuthInterceptor extends Interceptor {
         err.response?.statusCode == 401 &&
         options.extra[skipAuthKey] != true &&
         options.extra[_retriedKey] != true &&
-        _session.status == SessionStatus.active;
+        _session.status == .active;
 
     if (!shouldRefresh) {
       return handler.next(err);
@@ -56,5 +40,21 @@ final class AuthInterceptor extends Interceptor {
     } on DioException catch (retryError) {
       handler.next(retryError);
     }
+  }
+
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    if (options.extra[skipAuthKey] == true) {
+      return handler.next(options);
+    }
+
+    final token = await _session.validAccessToken();
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+    handler.next(options);
   }
 }

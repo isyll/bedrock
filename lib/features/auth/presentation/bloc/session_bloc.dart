@@ -12,7 +12,7 @@ final class SessionBloc extends Bloc<SessionEvent, SessionState> {
   SessionBloc({required AuthRepository authRepository})
     : _authRepository = authRepository,
       super(
-        SessionState(
+        .new(
           status: authRepository.currentStatus,
           user: authRepository.currentUser,
         ),
@@ -30,23 +30,10 @@ final class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   bool _signOutRequested = false;
 
-  void _onStatusChanged(
-    SessionStatusChanged event,
-    Emitter<SessionState> emit,
-  ) {
-    final previous = state.status;
-    final expired =
-        previous == AuthStatus.authenticated &&
-        event.status == AuthStatus.unauthenticated &&
-        !_signOutRequested;
-    _signOutRequested = false;
-    emit(
-      SessionState(
-        status: event.status,
-        user: _authRepository.currentUser,
-        expired: expired,
-      ),
-    );
+  @override
+  Future<void> close() {
+    unawaited(_statusSubscription.cancel());
+    return super.close();
   }
 
   Future<void> _onSignOutRequested(
@@ -57,9 +44,22 @@ final class SessionBloc extends Bloc<SessionEvent, SessionState> {
     return _authRepository.signOut();
   }
 
-  @override
-  Future<void> close() {
-    unawaited(_statusSubscription.cancel());
-    return super.close();
+  void _onStatusChanged(
+    SessionStatusChanged event,
+    Emitter<SessionState> emit,
+  ) {
+    final previous = state.status;
+    final expired =
+        previous == .authenticated &&
+        event.status == .unauthenticated &&
+        !_signOutRequested;
+    _signOutRequested = false;
+    emit(
+      .new(
+        status: event.status,
+        user: _authRepository.currentUser,
+        expired: expired,
+      ),
+    );
   }
 }

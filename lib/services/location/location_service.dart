@@ -2,7 +2,6 @@ import 'package:bedrock/core/error/app_exception.dart';
 import 'package:bedrock/core/error/result.dart';
 import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:bedrock/services/location/app_location.dart';
-import 'package:bedrock/services/permissions/app_permission.dart';
 import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -17,10 +16,6 @@ final class LocationService {
   final PermissionsService _permissions;
   final AppLogger _logger;
 
-  Future<bool> isServiceEnabled() => Geolocator.isLocationServiceEnabled();
-
-  Future<bool> openLocationSettings() => Geolocator.openLocationSettings();
-
   Future<Result<AppLocation>> currentLocation({
     LocationAccuracy accuracy = LocationAccuracy.high,
     Duration timeout = _defaultTimeout,
@@ -28,7 +23,7 @@ final class LocationService {
     return _guarded(() async {
       await _ensureReady();
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
+        locationSettings: .new(
           accuracy: accuracy,
           timeLimit: timeout,
         ),
@@ -36,6 +31,8 @@ final class LocationService {
       return AppLocation.fromPosition(position);
     });
   }
+
+  Future<bool> isServiceEnabled() => Geolocator.isLocationServiceEnabled();
 
   Future<Result<AppLocation?>> lastKnownLocation() {
     return _guarded(() async {
@@ -45,17 +42,17 @@ final class LocationService {
     });
   }
 
+  Future<bool> openLocationSettings() => Geolocator.openLocationSettings();
+
   Stream<AppLocation> watchLocation({
     LocationAccuracy accuracy = LocationAccuracy.high,
     int distanceFilterMeters = 25,
-  }) {
-    return Geolocator.getPositionStream(
-      locationSettings: LocationSettings(
-        accuracy: accuracy,
-        distanceFilter: distanceFilterMeters,
-      ),
-    ).map(AppLocation.fromPosition);
-  }
+  }) => Geolocator.getPositionStream(
+    locationSettings: .new(
+      accuracy: accuracy,
+      distanceFilter: distanceFilterMeters,
+    ),
+  ).map(AppLocation.fromPosition);
 
   Future<void> _ensureReady() async {
     if (!await isServiceEnabled()) {
@@ -65,13 +62,13 @@ final class LocationService {
       );
     }
 
-    final result = await _permissions.ensure(AppPermission.locationWhenInUse);
+    final result = await _permissions.ensure(.locationWhenInUse);
     if (result.isUsable) return;
 
     _logger.info('Location permission refused: ${result.name}');
     throw PermissionException(
       'Missing location permission',
-      permanentlyDenied: result == PermissionResult.permanentlyDenied,
+      permanentlyDenied: result == .permanentlyDenied,
     );
   }
 

@@ -19,16 +19,16 @@ class SignInPage extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
+                constraints: const .new(maxWidth: 420),
                 child: StaggeredColumn(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: .stretch,
                   children: [
                     Semantics(
                       header: true,
                       child: Text(
                         context.l10n.signInTitle,
                         style: context.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                         ),
                       ),
                     ),

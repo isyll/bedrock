@@ -1,6 +1,5 @@
 import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/error/app_exception.dart';
-import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
@@ -9,12 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
 
-const _config = AppConfig(
-  flavor: AppFlavor.dev,
-  appName: 'Test',
-  apiBaseUrl: 'https://api.test',
-);
-
 void main() {
   late InMemorySecureStorage secureStorage;
   late InMemoryKeyValueStorage keyValueStorage;
@@ -22,30 +15,28 @@ void main() {
   late SessionManager session;
   late AuthRepository repository;
 
-  SignInResult successfulSignIn() => SignInResult(
+  SignInResult successfulSignIn() => .new(
     user: ScriptedAuthApi.demoUser,
-    tokens: AuthTokens(
+    tokens: .new(
       accessToken: 'access',
       refreshToken: 'refresh',
-      expiresAt: DateTime.now().toUtc().add(const Duration(hours: 1)),
+      expiresAt: .now().toUtc().add(const .new(hours: 1)),
     ),
   );
 
   setUp(() {
-    secureStorage = InMemorySecureStorage();
-    keyValueStorage = InMemoryKeyValueStorage();
-    api = ScriptedAuthApi();
-    session = SessionManager(config: _config, storage: secureStorage);
-    repository = AuthRepository(
+    secureStorage = .new();
+    keyValueStorage = .new();
+    api = .new();
+    session = .new(config: _config, storage: secureStorage);
+    repository = .new(
       api: api,
       session: session,
       storage: keyValueStorage,
     );
   });
 
-  tearDown(() {
-    session.dispose();
-  });
+  tearDown(() => session.dispose());
 
   test('restore without stored tokens reports unauthenticated', () async {
     await repository.restore();
@@ -113,3 +104,9 @@ void main() {
     expect(keyValueStorage.getString(StorageKeys.currentUser), isNull);
   });
 }
+
+const _config = AppConfig(
+  flavor: .dev,
+  appName: 'Test',
+  apiBaseUrl: 'https://api.test',
+);

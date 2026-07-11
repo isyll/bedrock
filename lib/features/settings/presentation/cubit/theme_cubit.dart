@@ -18,6 +18,6 @@ final class ThemeCubit extends Cubit<ThemeMode> {
 
   static ThemeMode _restore(KeyValueStorage storage) {
     final saved = storage.getString(StorageKeys.themeMode);
-    return ThemeMode.values.asNameMap()[saved] ?? ThemeMode.system;
+    return .values.asNameMap()[saved] ?? .system;
   }
 }

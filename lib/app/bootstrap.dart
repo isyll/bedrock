@@ -45,6 +45,19 @@ Future<void> bootstrap(AppConfig config) async {
   }
 }
 
+void _bindCrashReportingToSession(
+  CrashReporter crashReporter,
+  AuthRepository authRepository,
+) {
+  crashReporter.setUserIdentifier(authRepository.currentUser?.id);
+  authRepository.status.listen((status) {
+    final userId = status == .authenticated
+        ? authRepository.currentUser?.id
+        : null;
+    crashReporter.setUserIdentifier(userId);
+  });
+}
+
 void _configureErrorHandling(CrashReporter crashReporter) {
   FlutterError.onError = (details) {
     if (kDebugMode) {
@@ -66,24 +79,11 @@ void _configureErrorHandling(CrashReporter crashReporter) {
   ErrorWidget.builder = (details) => AppErrorWidget(details: details);
 }
 
-void _bindCrashReportingToSession(
-  CrashReporter crashReporter,
-  AuthRepository authRepository,
-) {
-  crashReporter.setUserIdentifier(authRepository.currentUser?.id);
-  authRepository.status.listen((status) {
-    final userId = status == AuthStatus.authenticated
-        ? authRepository.currentUser?.id
-        : null;
-    crashReporter.setUserIdentifier(userId);
-  });
-}
-
 Future<void> _configureSystemUi() async {
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  await SystemChrome.setPreferredOrientations([.portraitUp]);
+  await SystemChrome.setEnabledSystemUIMode(.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
+    const .new(
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: Colors.transparent,
     ),

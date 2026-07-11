@@ -18,7 +18,7 @@ import 'package:bedrock/services/notifications/push_notifications_service.dart';
 import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:get_it/get_it.dart';
 
-final GetIt getIt = GetIt.instance;
+final GetIt getIt = .instance;
 
 Future<void> configureDependencies(
   AppConfig config, {

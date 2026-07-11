@@ -28,18 +28,16 @@ class HomePage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: StaggeredColumn(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               BlocSelector<SessionBloc, SessionState, String?>(
                 selector: (state) => state.user?.displayName,
-                builder: (context, displayName) {
-                  return Text(
-                    l10n.welcomeMessage(displayName ?? ''),
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  );
-                },
+                builder: (context, displayName) => Text(
+                  l10n.welcomeMessage(displayName ?? ''),
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    fontWeight: .w700,
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
               Text(

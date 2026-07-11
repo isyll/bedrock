@@ -26,14 +26,14 @@ class EmptyState extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: StaggeredColumn(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             AppLottie(animationAsset, size: 140),
             const SizedBox(height: 16),
             Text(
               title ?? l10n.emptyTitle,
               style: context.textTheme.titleMedium,
-              textAlign: TextAlign.center,
+              textAlign: .center,
             ),
             const SizedBox(height: 8),
             Text(
@@ -41,7 +41,7 @@ class EmptyState extends StatelessWidget {
               style: context.textTheme.bodyMedium?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
-              textAlign: TextAlign.center,
+              textAlign: .center,
             ),
             if (action != null) ...[const SizedBox(height: 24), action!],
           ],

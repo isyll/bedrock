@@ -25,27 +25,27 @@ class FadeSlideIn extends StatefulWidget {
 
 class _FadeSlideInState extends State<FadeSlideIn>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
+  late final _controller = AnimationController(
     vsync: this,
     duration: widget.duration,
   );
-  late final CurvedAnimation _animation = CurvedAnimation(
+  late final _animation = CurvedAnimation(
     parent: _controller,
     curve: widget.curve,
   );
   Timer? _delayTimer;
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.delay == Duration.zero) {
-      unawaited(_controller.forward());
-    } else {
-      _delayTimer = Timer(widget.delay, () {
-        if (mounted) unawaited(_controller.forward());
-      });
-    }
-  }
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: _animation,
+    child: SlideTransition(
+      position: Tween<Offset>(
+        begin: widget.offset,
+        end: .zero,
+      ).animate(_animation),
+      child: widget.child,
+    ),
+  );
 
   @override
   void dispose() {
@@ -56,16 +56,14 @@ class _FadeSlideInState extends State<FadeSlideIn>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: widget.offset,
-          end: Offset.zero,
-        ).animate(_animation),
-        child: widget.child,
-      ),
-    );
+  void initState() {
+    super.initState();
+    if (widget.delay == .zero) {
+      unawaited(_controller.forward());
+    } else {
+      _delayTimer = .new(widget.delay, () {
+        if (mounted) unawaited(_controller.forward());
+      });
+    }
   }
 }
