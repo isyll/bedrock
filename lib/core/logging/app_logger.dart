@@ -1,24 +1,16 @@
-import 'dart:developer' as developer;
+import 'package:bedrock/core/logging/console_log_sink.dart';
+import 'package:bedrock/core/logging/log_record.dart';
 
-import 'package:flutter/foundation.dart';
-
-enum LogLevel {
-  debug(500),
-  info(800),
-  warning(900),
-  error(1000);
-
-  const LogLevel(this.value);
-
-  final int value;
-}
+export 'package:bedrock/core/logging/log_record.dart';
 
 final class AppLogger {
   const AppLogger(this.name);
 
   final String name;
 
-  static LogLevel minimumLevel = kDebugMode ? LogLevel.debug : LogLevel.error;
+  static final List<LogSink> _sinks = [const ConsoleLogSink()];
+
+  static void addSink(LogSink sink) => _sinks.add(sink);
 
   void debug(String message) => _log(LogLevel.debug, message);
 
@@ -36,13 +28,19 @@ final class AppLogger {
     Object? error,
     StackTrace? stackTrace,
   ]) {
-    if (level.value < minimumLevel.value) return;
-    developer.log(
-      message,
-      name: name,
-      level: level.value,
+    final record = LogRecord(
+      level: level,
+      loggerName: name,
+      message: message,
+      timestamp: DateTime.now(),
       error: error,
       stackTrace: stackTrace,
     );
+
+    for (final sink in _sinks) {
+      if (record.level.atLeast(sink.minimumLevel)) {
+        sink.write(record);
+      }
+    }
   }
 }
