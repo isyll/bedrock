@@ -51,13 +51,16 @@ apk-dev:
 	flutter build apk --debug --flavor dev --target lib/main_dev.dart
 
 apk:
-	flutter build apk --release --flavor prod --target lib/main_prod.dart
+	flutter build apk --release --flavor prod --target lib/main_prod.dart \
+		--obfuscate --split-debug-info=build/symbols
 
 aab:
-	flutter build appbundle --release --flavor prod --target lib/main_prod.dart
+	flutter build appbundle --release --flavor prod --target lib/main_prod.dart \
+		--obfuscate --split-debug-info=build/symbols
 
 ipa:
-	flutter build ipa --release --flavor prod --target lib/main_prod.dart
+	flutter build ipa --release --flavor prod --target lib/main_prod.dart \
+		--obfuscate --split-debug-info=build/symbols
 
 icons:
 	dart run flutter_launcher_icons

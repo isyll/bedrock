@@ -23,11 +23,13 @@ Future<void> bootstrap(AppConfig config) async {
 
   final crashReporter = CrashReporter();
   _configureErrorHandling(crashReporter);
-  await _configureSystemUi();
 
-  final firebaseReady = await _initializeFirebase(config);
+  final (firebaseReady, _, _) = await (
+    _initializeFirebase(config),
+    _configureSystemUi(),
+    configureDependencies(config, crashReporter: crashReporter),
+  ).wait;
 
-  await configureDependencies(config, crashReporter: crashReporter);
   await crashReporter.initialize(firebaseAvailable: firebaseReady);
 
   final authRepository = getIt<AuthRepository>();
