@@ -1,18 +1,63 @@
+import 'package:bedrock/core/error/app_exception.dart';
+import 'package:bedrock/core/logging/app_logger.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final class SecureStorage {
-  const SecureStorage();
+class SecureStorage {
+  const SecureStorage({this._logger = const AppLogger('SecureStorage')});
 
   static const _storage = FlutterSecureStorage(
-    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    aOptions: AndroidOptions(migrateWithBackup: true),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
   );
 
-  Future<String?> read(String key) => _storage.read(key: key);
+  final AppLogger _logger;
 
-  Future<void> write(String key, String value) =>
-      _storage.write(key: key, value: value);
+  Future<String?> read(String key) async {
+    try {
+      return await _storage.read(key: key);
+    } on PlatformException catch (error) {
+      _logger.warning('Failed to read secure value for $key', error);
+      return null;
+    }
+  }
 
-  Future<void> delete(String key) => _storage.delete(key: key);
+  Future<void> write(String key, String value) async {
+    try {
+      await _storage.write(key: key, value: value);
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Failed to write secure value for $key',
+        error,
+        stackTrace,
+      );
+      throw const StorageException('Failed to persist a secure value');
+    }
+  }
 
-  Future<void> deleteAll() => _storage.deleteAll();
+  Future<void> delete(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } on PlatformException catch (error) {
+      _logger.warning('Failed to delete secure value for $key', error);
+    }
+  }
+
+  Future<bool> containsKey(String key) async {
+    try {
+      return await _storage.containsKey(key: key);
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  Future<void> deleteAll() async {
+    try {
+      await _storage.deleteAll();
+    } on PlatformException catch (error) {
+      _logger.warning('Failed to clear secure storage', error);
+    }
+  }
 }

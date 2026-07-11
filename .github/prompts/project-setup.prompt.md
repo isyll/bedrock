@@ -5,14 +5,14 @@ description: Bootstrap a new app from the Bedrock template by renaming the proje
 
 Bootstrap a new app from this Bedrock template.
 
-Collect from me before starting (ask if missing): app display name, project name (snake_case), organization package prefix (e.g. com.acme), dev and prod API base URLs, OAuth token endpoint path and optional client id, deep link hosts per flavor, and whether Firebase/FCM is needed now.
+Collect from me before starting (ask if missing): app display name, project name (snake_case), organization package prefix (e.g. com.acme), dev and prod API base URLs, auth endpoint paths if they differ from the defaults (/auth/login, /auth/refresh, /auth/logout, /me), deep link hosts per flavor, and whether Firebase/FCM is needed now.
 
 Then apply these steps:
 
 1. Rename the Dart package: `name:` in `pubspec.yaml`, then every `package:bedrock/` import across `lib/`.
 2. Rename the Android package: `namespace`, `applicationId`, and both `resValue("string", "app_name", ...)` entries in `android/app/build.gradle.kts`, move `MainActivity.kt` to the new package path and update its `package` declaration, and update `manifestPlaceholders["deepLinkHost"]` per flavor.
 3. Rename the iOS bundle: all `PRODUCT_BUNDLE_IDENTIFIER` values in `ios/Runner.xcodeproj/project.pbxproj` (dev configs keep the `.dev` suffix), plus `APP_DISPLAY_NAME` and `DEEP_LINK_HOST` values. Update `CFBundleName` and the custom URL scheme in `ios/Runner/Info.plist`.
-4. Update `lib/main_dev.dart` and `lib/main_prod.dart` (`appName`, `apiBaseUrl`, `tokenEndpoint`, `oauthClientId`, `deepLinkHost`), the default `deepLinkScheme` in `lib/core/config/app_config.dart`, and the Android custom scheme in `AndroidManifest.xml`.
+4. Update `lib/main_dev.dart` and `lib/main_prod.dart` (`appName`, `apiBaseUrl`, `deepLinkHost`, and `authEndpoints` when the backend paths differ from the defaults), the default `deepLinkScheme` in `lib/core/config/app_config.dart`, and the Android custom scheme in `AndroidManifest.xml`. Reword the iOS usage descriptions in `ios/Runner/Info.plist` and update the pinning placeholder in `android/app/src/main/res/xml/network_security_config.xml` if pinning is enabled.
 5. Update `appTitle` in `assets/l10n/app_en.arb` and `assets/l10n/app_fr.arb`, then run `flutter gen-l10n`.
 6. Replace images in `assets/branding/` (same file names), update colors in `flutter_launcher_icons-*.yaml`, `flutter_native_splash.yaml`, and `lib/app/theme/app_colors.dart`, then run `dart run flutter_launcher_icons` and `dart run flutter_native_splash:create`.
 7. If Firebase is needed, run `flutterfire configure` per flavor, paste the values into `lib/core/config/firebase/firebase_options_dev.dart` and `firebase_options_prod.dart`, and set `configured = true` in each.

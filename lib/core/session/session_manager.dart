@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/logging/app_logger.dart';
+import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
 import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
@@ -14,6 +15,7 @@ final class SessionManager {
     required AppConfig config,
     required this._storage,
     Dio? tokenClient,
+    LocaleResolver? localeResolver,
     this._logger = const AppLogger('SessionManager'),
   }) : _config = config,
        _tokenClient =
@@ -25,7 +27,9 @@ final class SessionManager {
                receiveTimeout: const Duration(seconds: 20),
                headers: const {'Accept': 'application/json'},
              ),
-           );
+           ) {
+    _tokenClient.interceptors.add(LocaleInterceptor(resolver: localeResolver));
+  }
 
   final AppConfig _config;
   final SecureStorage _storage;
@@ -43,6 +47,20 @@ final class SessionManager {
   Stream<SessionStatus> get statusStream => _statusController.stream;
 
   String? get accessToken => _tokens?.accessToken;
+
+  bool get hasValidAccessToken {
+    final tokens = _tokens;
+    return tokens != null && !tokens.isExpired;
+  }
+
+  Future<String?> validAccessToken() {
+    final tokens = _tokens;
+    if (tokens == null) return Future.value();
+    if (!tokens.isExpired) return Future.value(tokens.accessToken);
+
+    _logger.debug('Access token expired, refreshing before request');
+    return refreshAccessToken();
+  }
 
   Future<void> restore() async {
     final accessToken = await _storage.read(StorageKeys.accessToken);
@@ -96,22 +114,16 @@ final class SessionManager {
 
     try {
       final response = await _tokenClient.post<Map<String, dynamic>>(
-        _config.tokenEndpoint,
-        data: {
-          'grant_type': 'refresh_token',
-          'refresh_token': refreshToken,
-          if (_config.oauthClientId != null) 'client_id': _config.oauthClientId,
-        },
-        options: Options(contentType: Headers.formUrlEncodedContentType),
+        _config.authEndpoints.refresh,
+        data: {'refresh_token': refreshToken},
       );
 
       final body = response.data;
-      if (body == null) throw StateError('Empty token response');
+      if (body == null) throw StateError('Empty refresh response');
 
-      final tokens = AuthTokens(
-        accessToken: body['access_token'] as String,
-        refreshToken: (body['refresh_token'] as String?) ?? refreshToken,
-        expiresAt: _expiryFrom(body),
+      final tokens = AuthTokens.fromJson(
+        body,
+        fallbackRefreshToken: refreshToken,
       );
       _tokens = tokens;
       await _persist(tokens);
@@ -130,12 +142,6 @@ final class SessionManager {
       _logger.error('Unexpected error refreshing token', error);
       return null;
     }
-  }
-
-  DateTime? _expiryFrom(Map<String, dynamic> body) {
-    final expiresIn = body['expires_in'] as num?;
-    if (expiresIn == null) return null;
-    return DateTime.now().add(Duration(seconds: expiresIn.toInt()));
   }
 
   Future<void> _persist(AuthTokens tokens) async {

@@ -2,13 +2,26 @@ import 'package:firebase_core/firebase_core.dart';
 
 enum AppFlavor { dev, prod }
 
+final class AuthEndpoints {
+  const AuthEndpoints({
+    this.signIn = '/auth/login',
+    this.refresh = '/auth/refresh',
+    this.signOut = '/auth/logout',
+    this.profile = '/me',
+  });
+
+  final String signIn;
+  final String refresh;
+  final String signOut;
+  final String profile;
+}
+
 final class AppConfig {
   const AppConfig({
     required this.flavor,
     required this.appName,
     required this.apiBaseUrl,
-    required this.tokenEndpoint,
-    this.oauthClientId,
+    this.authEndpoints = const AuthEndpoints(),
     this.firebaseOptions,
     this.deepLinkScheme = 'bedrock',
     this.deepLinkHost = '',
@@ -18,8 +31,7 @@ final class AppConfig {
   final AppFlavor flavor;
   final String appName;
   final String apiBaseUrl;
-  final String tokenEndpoint;
-  final String? oauthClientId;
+  final AuthEndpoints authEndpoints;
   final FirebaseOptions? firebaseOptions;
   final String deepLinkScheme;
   final String deepLinkHost;

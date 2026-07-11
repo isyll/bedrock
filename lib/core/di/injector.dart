@@ -7,25 +7,43 @@ import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
+import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:bedrock/services/biometrics/biometrics_service.dart';
+import 'package:bedrock/services/crash/crash_reporter.dart';
+import 'package:bedrock/services/location/location_service.dart';
+import 'package:bedrock/services/media/media_picker_service.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
+import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt getIt = GetIt.instance;
 
-Future<void> configureDependencies(AppConfig config) async {
-  final prefs = await SharedPreferences.getInstance();
+Future<void> configureDependencies(
+  AppConfig config, {
+  CrashReporter? crashReporter,
+}) async {
+  final keyValueStorage = await KeyValueStorage.create();
 
   getIt
     ..registerSingleton<AppConfig>(config)
-    ..registerSingleton<KeyValueStorage>(KeyValueStorage(prefs))
+    ..registerSingleton<CrashReporter>(crashReporter ?? CrashReporter())
+    ..registerSingleton<KeyValueStorage>(keyValueStorage)
     ..registerSingleton<SecureStorage>(const SecureStorage())
     ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: getIt()))
     ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: getIt()))
+    ..registerLazySingleton<BiometricsService>(BiometricsService.new)
+    ..registerLazySingleton<AppLockCubit>(
+      () => AppLockCubit(storage: getIt(), biometrics: getIt()),
+      dispose: (cubit) => cubit.close(),
+    )
     ..registerLazySingleton<SessionManager>(
-      () => SessionManager(config: getIt(), storage: getIt()),
+      () => SessionManager(
+        config: getIt(),
+        storage: getIt(),
+        localeResolver: () => getIt<LocaleCubit>().languageCode,
+      ),
       dispose: (manager) => manager.dispose(),
     )
     ..registerLazySingleton<ApiClientFactory>(
@@ -60,5 +78,12 @@ Future<void> configureDependencies(AppConfig config) async {
         onOpenRoute: (route) => getIt<AppRouter>().router.go(route),
       ),
       dispose: (service) => service.dispose(),
+    )
+    ..registerLazySingleton<PermissionsService>(PermissionsService.new)
+    ..registerLazySingleton<MediaPickerService>(
+      () => MediaPickerService(permissions: getIt()),
+    )
+    ..registerLazySingleton<LocationService>(
+      () => LocationService(permissions: getIt()),
     );
 }

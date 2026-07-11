@@ -10,7 +10,7 @@ Collect from the user before starting (ask if missing):
 1. App name (display name, e.g. "My App") and project name (snake_case, e.g. `my_app`)
 2. Organization / package prefix (e.g. `com.acme`)
 3. API base URLs for dev and prod
-4. OAuth token endpoint path and optional client id
+4. Auth endpoint paths if they differ from the defaults (`/auth/login`, `/auth/refresh`, `/auth/logout`, `/me`)
 5. Deep link hosts for dev and prod (or skip deep links)
 6. Whether Firebase/FCM is needed now
 
@@ -25,9 +25,11 @@ Collect from the user before starting (ask if missing):
    - In `ios/Runner.xcodeproj/project.pbxproj`: update all `PRODUCT_BUNDLE_IDENTIFIER` values (dev configs get the `.dev` suffix), `APP_DISPLAY_NAME` values, and `DEEP_LINK_HOST` values.
    - In `ios/Runner/Info.plist`: update `CFBundleName` and the `CFBundleURLSchemes` custom scheme.
 4. Update app config:
-   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `tokenEndpoint`, `oauthClientId`, `deepLinkHost`.
+   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `deepLinkHost`, and `authEndpoints` (an `AuthEndpoints` instance) when the backend paths differ from the defaults.
    - `lib/core/config/app_config.dart`: default `deepLinkScheme`.
    - Android custom scheme in `android/app/src/main/AndroidManifest.xml` (`<data android:scheme=...>`).
+   - iOS usage descriptions in `ios/Runner/Info.plist`: keep only the permissions the app requests and reword them for the product.
+   - Certificate pinning placeholder domain in `android/app/src/main/res/xml/network_security_config.xml` when enabling pinning.
 5. Localizations: update `appTitle` in `assets/l10n/app_en.arb` and `assets/l10n/app_fr.arb`, then run `flutter gen-l10n`.
 6. Branding: replace images in `assets/branding/` (keep the same file names), update colors in `flutter_launcher_icons-*.yaml` and `flutter_native_splash.yaml` and `lib/app/theme/app_colors.dart`, then run `dart run flutter_launcher_icons` and `dart run flutter_native_splash:create`.
 7. Firebase (if needed): run `flutterfire configure` once per flavor project, paste the generated values into `lib/core/config/firebase/firebase_options_dev.dart` and `firebase_options_prod.dart`, and set `configured = true` in each.

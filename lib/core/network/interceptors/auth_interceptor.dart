@@ -11,12 +11,15 @@ final class AuthInterceptor extends Interceptor {
   final Dio _retryClient;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     if (options.extra[skipAuthKey] == true) {
       return handler.next(options);
     }
 
-    final token = _session.accessToken;
+    final token = await _session.validAccessToken();
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }

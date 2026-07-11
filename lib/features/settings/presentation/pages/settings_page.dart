@@ -1,8 +1,16 @@
+import 'dart:async';
+
 import 'package:bedrock/core/extensions/context_extensions.dart';
+import 'package:bedrock/core/l10n/app_localizations.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
+import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:bedrock/services/biometrics/biometrics_service.dart';
+import 'package:bedrock/shared/animations/app_motion.dart';
+import 'package:bedrock/shared/animations/fade_slide_in.dart';
 import 'package:bedrock/shared/widgets/adaptive/adaptive_dialogs.dart';
+import 'package:bedrock/shared/widgets/feedback/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,40 +27,53 @@ class SettingsPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _SectionHeader(title: l10n.appearanceSection),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.brightness_6_outlined),
-                    title: Text(l10n.themeLabel),
-                    trailing: const _ThemeModeSelector(),
-                  ),
-                  const Divider(indent: 16, endIndent: 16),
-                  ListTile(
-                    leading: const Icon(Icons.language_outlined),
-                    title: Text(l10n.languageLabel),
-                    trailing: const _LocaleSelector(),
-                  ),
-                ],
+            for (final (index, section) in _sections(context, l10n).indexed)
+              FadeSlideIn(
+                delay: AppMotion.staggerInterval * index,
+                child: section,
               ),
-            ),
-            const SizedBox(height: 24),
-            _SectionHeader(title: l10n.accountSection),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.logout, color: context.colorScheme.error),
-                title: Text(
-                  l10n.signOutButton,
-                  style: TextStyle(color: context.colorScheme.error),
-                ),
-                onTap: () => _confirmSignOut(context),
-              ),
-            ),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _sections(BuildContext context, AppLocalizations l10n) {
+    return [
+      _SectionHeader(title: l10n.appearanceSection),
+      Card(
+        child: Column(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.brightness_6_outlined),
+              title: Text(l10n.themeLabel),
+              trailing: const _ThemeModeSelector(),
+            ),
+            const Divider(indent: 16, endIndent: 16),
+            ListTile(
+              leading: const Icon(Icons.language_outlined),
+              title: Text(l10n.languageLabel),
+              trailing: const _LocaleSelector(),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 24),
+      _SectionHeader(title: l10n.securitySection),
+      const Card(child: _BiometricLockTile()),
+      const SizedBox(height: 24),
+      _SectionHeader(title: l10n.accountSection),
+      Card(
+        child: ListTile(
+          leading: Icon(Icons.logout, color: context.colorScheme.error),
+          title: Text(
+            l10n.signOutButton,
+            style: TextStyle(color: context.colorScheme.error),
+          ),
+          onTap: () => _confirmSignOut(context),
+        ),
+      ),
+    ];
   }
 
   Future<void> _confirmSignOut(BuildContext context) async {
@@ -131,6 +152,54 @@ class _ThemeModeSelector extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _BiometricLockTile extends StatelessWidget {
+  const _BiometricLockTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return BlocBuilder<AppLockCubit, AppLockState>(
+      builder: (context, state) {
+        return SwitchListTile(
+          secondary: const Icon(Icons.fingerprint),
+          title: Text(l10n.biometricLockLabel),
+          subtitle: Text(
+            state.biometricsSupported
+                ? l10n.biometricLockDescription
+                : l10n.biometricsUnavailableMessage,
+          ),
+          value: state.isEnabled,
+          onChanged: state.biometricsSupported
+              ? (value) => unawaited(_toggle(context, enable: value))
+              : null,
+        );
+      },
+    );
+  }
+
+  Future<void> _toggle(BuildContext context, {required bool enable}) async {
+    final cubit = context.read<AppLockCubit>();
+    final l10n = context.l10n;
+
+    final result = enable
+        ? await cubit.enable(l10n.biometricPromptReason)
+        : await cubit.disable(l10n.biometricPromptReason);
+
+    final rejected =
+        result == BiometricAuthResult.unavailable ||
+        result == BiometricAuthResult.notEnrolled ||
+        result == BiometricAuthResult.permanentlyLockedOut;
+    if (rejected && context.mounted) {
+      showAppSnackBar(
+        context,
+        l10n.biometricsUnavailableMessage,
+        kind: SnackBarKind.error,
+      );
+    }
   }
 }
 

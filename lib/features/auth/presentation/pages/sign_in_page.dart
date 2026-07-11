@@ -2,6 +2,7 @@ import 'package:bedrock/core/di/injector.dart';
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:bedrock/features/auth/presentation/cubit/sign_in_cubit.dart';
 import 'package:bedrock/features/auth/presentation/widgets/sign_in_form.dart';
+import 'package:bedrock/shared/animations/staggered_column.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,7 +20,7 @@ class SignInPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 420),
-                child: Column(
+                child: StaggeredColumn(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Semantics(

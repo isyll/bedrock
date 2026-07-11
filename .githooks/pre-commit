@@ -2,7 +2,7 @@
 set -e
 
 echo "pre-commit: checking format"
-dart format --set-exit-if-changed lib
+dart format --set-exit-if-changed lib test
 
 echo "pre-commit: analyzing"
 flutter analyze --no-pub

@@ -50,3 +50,6 @@ ios/Runner/GoogleService-Info.plist
 
 # Generated localizations
 lib/core/l10n/
+
+# Local Claude settings
+.claude/settings.local.json

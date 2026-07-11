@@ -4,6 +4,8 @@ import 'package:bedrock/core/di/injector.dart';
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:bedrock/core/l10n/app_localizations.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
+import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
+import 'package:bedrock/features/security/presentation/widgets/app_lock_gate.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:bedrock/shared/widgets/feedback/app_snackbar.dart';
@@ -20,6 +22,7 @@ class App extends StatelessWidget {
         BlocProvider<SessionBloc>.value(value: getIt()),
         BlocProvider<ThemeCubit>.value(value: getIt()),
         BlocProvider<LocaleCubit>.value(value: getIt()),
+        BlocProvider<AppLockCubit>.value(value: getIt()),
       ],
       child: const AppView(),
     );
@@ -55,9 +58,11 @@ class AppView extends StatelessWidget {
               kind: SnackBarKind.error,
             );
           },
-          child: MediaQuery.withClampedTextScaling(
-            maxScaleFactor: 2,
-            child: child ?? const SizedBox.shrink(),
+          child: AppLockGate(
+            child: MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 2,
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         );
       },

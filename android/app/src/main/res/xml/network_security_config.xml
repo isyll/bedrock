@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+    <!-- Pin your API certificates before release, for example:
+    <domain-config>
+        <domain includeSubdomains="true">api.example.com</domain>
+        <pin-set expiration="2027-12-31">
+            <pin digest="SHA-256">primarySpkiSha256Base64=</pin>
+            <pin digest="SHA-256">backupSpkiSha256Base64=</pin>
+        </pin-set>
+    </domain-config>
+    -->
+</network-security-config>
