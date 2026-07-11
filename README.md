@@ -34,6 +34,7 @@ Start every mobile project on solid ground: flavors, opaque-token sessions, bloc
 | Permissions | `PermissionsService` baseline over `permission_handler`, localized denial errors |
 | Media | `MediaPickerService` for gallery, camera, and document picking |
 | Location | `LocationService` over `geolocator` with permission-aware `Result` API |
+| Biometrics | Opt-in app lock over `local_auth`: settings toggle, locks on background, Face ID and fingerprint |
 | Animations | Motion tokens, entrance/stagger/press widgets, Lottie with graceful fallback |
 | Localization | ARB files in `assets/l10n`, generated with `flutter gen-l10n` (en, fr), `Accept-Language` on every request |
 | Theming | Material 3 seeded color scheme, light and dark, widget-state-aware component themes, semantic color extension, Cupertino-adaptive widgets |

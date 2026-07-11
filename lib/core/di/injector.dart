@@ -7,8 +7,10 @@ import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
+import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:bedrock/services/crash/crash_reporter.dart';
 import 'package:bedrock/services/location/location_service.dart';
 import 'package:bedrock/services/media/media_picker_service.dart';
@@ -31,6 +33,11 @@ Future<void> configureDependencies(
     ..registerSingleton<SecureStorage>(const SecureStorage())
     ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: getIt()))
     ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: getIt()))
+    ..registerLazySingleton<BiometricsService>(BiometricsService.new)
+    ..registerLazySingleton<AppLockCubit>(
+      () => AppLockCubit(storage: getIt(), biometrics: getIt()),
+      dispose: (cubit) => cubit.close(),
+    )
     ..registerLazySingleton<SessionManager>(
       () => SessionManager(
         config: getIt(),

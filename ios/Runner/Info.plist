@@ -48,6 +48,8 @@
 		<true/>
 		<key>NSCameraUsageDescription</key>
 		<string>This app uses the camera to let you take photos.</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>This app uses Face ID to unlock the app.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app uses your location to provide location-based features.</string>
 		<key>NSMicrophoneUsageDescription</key>
