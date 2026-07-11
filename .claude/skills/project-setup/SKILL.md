@@ -28,6 +28,8 @@ Collect from the user before starting (ask if missing):
    - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `deepLinkHost`, and `authEndpoints` (an `AuthEndpoints` instance) when the backend paths differ from the defaults.
    - `lib/core/config/app_config.dart`: default `deepLinkScheme`.
    - Android custom scheme in `android/app/src/main/AndroidManifest.xml` (`<data android:scheme=...>`).
+   - iOS usage descriptions in `ios/Runner/Info.plist`: keep only the permissions the app requests and reword them for the product.
+   - Certificate pinning placeholder domain in `android/app/src/main/res/xml/network_security_config.xml` when enabling pinning.
 5. Localizations: update `appTitle` in `assets/l10n/app_en.arb` and `assets/l10n/app_fr.arb`, then run `flutter gen-l10n`.
 6. Branding: replace images in `assets/branding/` (keep the same file names), update colors in `flutter_launcher_icons-*.yaml` and `flutter_native_splash.yaml` and `lib/app/theme/app_colors.dart`, then run `dart run flutter_launcher_icons` and `dart run flutter_native_splash:create`.
 7. Firebase (if needed): run `flutterfire configure` once per flavor project, paste the generated values into `lib/core/config/firebase/firebase_options_dev.dart` and `firebase_options_prod.dart`, and set `configured = true` in each.

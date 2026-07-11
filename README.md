@@ -6,7 +6,7 @@
 
 **A production-grade Flutter template for Android and iOS.**
 
-Start every mobile project on solid ground: flavors, opaque-token sessions, bloc state management, routing, theming, l10n, push notifications, and quality tooling, all wired and verified.
+Start every mobile project on solid ground: flavors, opaque-token sessions, bloc state management, routing, theming, l10n, push notifications, crash reporting, device services, animations, and quality tooling, all wired and verified.
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-45cdf5?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)
@@ -27,10 +27,17 @@ Start every mobile project on solid ground: flavors, opaque-token sessions, bloc
 | Networking | `dio` behind a multi-client factory, opaque token auth with proactive expiry checks and single-flight refresh |
 | Errors | Sealed `AppException` hierarchy and a hand-rolled `Result<T>`, no exceptions across layers |
 | DI | `get_it`, plain constructor injection |
-| Storage | `shared_preferences` for settings, `flutter_secure_storage` for tokens |
+| Storage | `shared_preferences` (cached) for settings, hardened `flutter_secure_storage` for tokens |
+| Logging | Sink-based `AppLogger` with boxed, colored console output and Crashlytics forwarding |
+| Crash reporting | Firebase Crashlytics: fatal handlers, breadcrumbs, non-fatal records, user id binding |
 | Push | Firebase Cloud Messaging with `flutter_local_notifications` for foreground display |
-| Localization | ARB files in `assets/l10n`, generated with `flutter gen-l10n` (en, fr) |
-| Theming | Material 3 seeded color scheme, light and dark, semantic color extension, Cupertino-adaptive widgets |
+| Permissions | `PermissionsService` baseline over `permission_handler`, localized denial errors |
+| Media | `MediaPickerService` for gallery, camera, and document picking |
+| Location | `LocationService` over `geolocator` with permission-aware `Result` API |
+| Animations | Motion tokens, entrance/stagger/press widgets, Lottie with graceful fallback |
+| Localization | ARB files in `assets/l10n`, generated with `flutter gen-l10n` (en, fr), `Accept-Language` on every request |
+| Theming | Material 3 seeded color scheme, light and dark, widget-state-aware component themes, semantic color extension, Cupertino-adaptive widgets |
+| Security | No cleartext traffic, certificate pin scaffold, obfuscated release builds, device-bound keychain |
 | Quality | `very_good_analysis`, `dart format`, opt-in git pre-commit hooks, GitHub Actions CI |
 
 ## Getting started
@@ -84,8 +91,11 @@ lib/
 │   ├── auth/                        sign in, session, token lifecycle
 │   ├── home/
 │   └── settings/                    theme and language preferences
-├── services/                        push notifications
-└── shared/widgets/                  adaptive, buttons, feedback, error views
+├── services/                        crash reporting, location, media picking,
+│                                    permissions, push notifications
+└── shared/                          animations toolkit and reusable UI
+    ├── animations/                  AppMotion, FadeSlideIn, TapScale, Lottie
+    └── widgets/                     adaptive, buttons, feedback, error views
 ```
 
 The session flow is the backbone: the backend issues an opaque access token with an `expires_at` timestamp, `AuthInterceptor` checks that expiry before every request and refreshes stale tokens once for all concurrent requests (with a 401 retry as fallback), `SessionManager` persists and rotates tokens, `SessionBloc` exposes the session to the UI, and the router redirects based on it. A refresh failure ends the session gracefully with a localized notice, never a crash.
@@ -97,10 +107,18 @@ The session flow is the backbone: the backend issues an opaque access token with
 - [ ] `flutterfire configure` per flavor, paste into `lib/core/config/firebase/`, flip `configured` to `true`
 - [ ] Replace `assets/branding/` images, then `make icons splash`
 - [ ] Point deep link hosts at your domains (Gradle placeholders, iOS `DEEP_LINK_HOST`)
+- [ ] Review the iOS usage descriptions in `ios/Runner/Info.plist` and keep only the permissions your app requests
+- [ ] Pin your API certificates in `android/app/src/main/res/xml/network_security_config.xml` before release
 - [ ] Add `android/key.properties` and a keystore for release signing
 - [ ] `make hooks` to enable pre-commit checks
 - [ ] Enable the GitHub Copilot coding agent on the repository (its environment setup workflow ships preconfigured)
 
+## Notes on production services
+
+- Crash reporting activates automatically in non-debug builds once Firebase is configured; collection stays off in debug and without Firebase options.
+- Release builds via `make apk`, `make aab`, and `make ipa` are obfuscated with debug symbols split into `build/symbols`. Keep those symbols to deobfuscate Crashlytics stack traces.
+- For native Android crash symbolication, add the Crashlytics Gradle plugin alongside `google-services` once your Firebase project is wired.
+
 ## License
 
-Private template by [Ibrahima Sylla](https://github.com/isyll).
+Released under the [MIT License](LICENSE) by [Ibrahima Sylla](https://github.com/isyll). Use it freely for personal and commercial projects.
