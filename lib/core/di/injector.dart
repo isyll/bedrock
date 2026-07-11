@@ -32,7 +32,11 @@ Future<void> configureDependencies(
     ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: getIt()))
     ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: getIt()))
     ..registerLazySingleton<SessionManager>(
-      () => SessionManager(config: getIt(), storage: getIt()),
+      () => SessionManager(
+        config: getIt(),
+        storage: getIt(),
+        localeResolver: () => getIt<LocaleCubit>().languageCode,
+      ),
       dispose: (manager) => manager.dispose(),
     )
     ..registerLazySingleton<ApiClientFactory>(

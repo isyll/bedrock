@@ -3,12 +3,11 @@ import 'package:bedrock/core/error/app_exception.dart';
 import 'package:bedrock/core/error/result.dart';
 import 'package:bedrock/core/network/exception_mapper.dart';
 import 'package:bedrock/core/network/interceptors/auth_interceptor.dart';
+import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/logging_interceptor.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
-typedef LocaleResolver = String? Function();
 
 final class ApiClient {
   const ApiClient(this.dio);
@@ -72,7 +71,7 @@ final class ApiClientFactory {
     }
 
     dio.interceptors.addAll([
-      _HeadersInterceptor(localeResolver: _localeResolver),
+      LocaleInterceptor(resolver: _localeResolver),
       ...interceptors,
       if (kDebugMode) const LoggingInterceptor(),
     ]);
@@ -95,20 +94,5 @@ final class ApiClientFactory {
         headers: {'Accept': 'application/json', ...headers},
       ),
     );
-  }
-}
-
-final class _HeadersInterceptor extends Interceptor {
-  const _HeadersInterceptor({this._localeResolver});
-
-  final LocaleResolver? _localeResolver;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final locale = _localeResolver?.call();
-    if (locale != null) {
-      options.headers['Accept-Language'] = locale;
-    }
-    handler.next(options);
   }
 }

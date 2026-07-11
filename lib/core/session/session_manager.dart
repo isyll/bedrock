@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/logging/app_logger.dart';
+import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
 import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
@@ -14,6 +15,7 @@ final class SessionManager {
     required AppConfig config,
     required this._storage,
     Dio? tokenClient,
+    LocaleResolver? localeResolver,
     this._logger = const AppLogger('SessionManager'),
   }) : _config = config,
        _tokenClient =
@@ -25,7 +27,9 @@ final class SessionManager {
                receiveTimeout: const Duration(seconds: 20),
                headers: const {'Accept': 'application/json'},
              ),
-           );
+           ) {
+    _tokenClient.interceptors.add(LocaleInterceptor(resolver: localeResolver));
+  }
 
   final AppConfig _config;
   final SecureStorage _storage;
