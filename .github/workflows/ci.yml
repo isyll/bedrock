@@ -66,7 +66,7 @@ jobs:
       - name: Build debug APK
         run: flutter build apk --debug --flavor dev --target lib/main_dev.dart
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: app-dev-debug
           path: build/app/outputs/flutter-apk/app-dev-debug.apk
