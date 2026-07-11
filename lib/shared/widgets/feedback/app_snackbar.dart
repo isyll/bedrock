@@ -16,7 +16,7 @@ void showAppSnackBar(
       colorScheme.inverseSurface,
       colorScheme.onInverseSurface,
     ),
-    SnackBarKind.success => (semantic.success, colorScheme.surface),
+    SnackBarKind.success => (semantic.success, semantic.onSuccess),
     SnackBarKind.error => (colorScheme.error, colorScheme.onError),
   };
 
