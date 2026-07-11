@@ -8,7 +8,6 @@ Future<void> main() {
       flavor: AppFlavor.prod,
       appName: 'Bedrock',
       apiBaseUrl: 'https://api.example.com/v1',
-      tokenEndpoint: '/oauth/token',
       deepLinkHost: 'app.example.com',
       firebaseOptions: ProdFirebaseOptions.currentPlatformOrNull,
     ),

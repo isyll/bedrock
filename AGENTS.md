@@ -1,6 +1,6 @@
 # Bedrock
 
-Production-grade Flutter template for Android and iOS, paired with a REST API backend using OAuth2 (access + refresh tokens, not JWT-specific).
+Production-grade Flutter template for Android and iOS, paired with a REST API backend using opaque access tokens (access + refresh token pair, server-side revocation, expiry driven by the `expires_at` value returned at sign in).
 
 ## Commands
 
@@ -21,7 +21,7 @@ A `Makefile` wraps all of these (`make help`).
 
 - State management: `flutter_bloc` only. App-wide state lives in `SessionBloc` (auth session), `ThemeCubit`, and `LocaleCubit`, provided above `MaterialApp.router`. Screen state uses a `Bloc` or `Cubit` scoped to the page with `BlocProvider`.
 - Navigation: `go_router` in `lib/app/router/`. Auth guarding is done in the central `redirect`, refreshed through the `SessionBloc` stream. Deep links are handled natively by go_router (`FlutterDeepLinkingEnabled` on iOS, `autoVerify` intent filters on Android).
-- Networking: `dio` behind `ApiClientFactory` (`lib/core/network/`). Multiple clients are supported; each authenticated client gets an `AuthInterceptor` that attaches the bearer token and performs a single-flight refresh-and-retry on 401. Token refresh is owned by `SessionManager` (`lib/core/session/`), which never touches UI or routing.
+- Networking: `dio` behind `ApiClientFactory` (`lib/core/network/`). Multiple clients are supported; each authenticated client gets an `AuthInterceptor` that checks token expiry before every request (refreshing proactively when stale) and falls back to a single-flight refresh-and-retry on 401. Token lifecycle is owned by `SessionManager` (`lib/core/session/`), which never touches UI or routing. Auth endpoint paths live in `AuthEndpoints` (`lib/core/config/app_config.dart`).
 - Errors: repositories return `Result<T>` (`lib/core/error/result.dart`), never throw across layers. `DioException` is mapped to a sealed `AppException` hierarchy via `mapDioException`. UI messages come from `AppExceptionMessage.localizedMessage`.
 - DI: `get_it` registrations in `lib/core/di/injector.dart`. Constructor injection everywhere; no service locator calls inside business logic.
 - Flavors: `dev` and `prod`. Entry points `lib/main_dev.dart` and `lib/main_prod.dart` each build an immutable `AppConfig` and import only their own Firebase options file, so flavor-specific values are tree-shaken out of the other flavor's binary. Never import a dev config from shared code.

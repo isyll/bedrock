@@ -6,7 +6,7 @@
 
 **A production-grade Flutter template for Android and iOS.**
 
-Start every mobile project on solid ground: flavors, OAuth2 sessions, bloc state management, routing, theming, l10n, push notifications, and quality tooling, all wired and verified.
+Start every mobile project on solid ground: flavors, opaque-token sessions, bloc state management, routing, theming, l10n, push notifications, and quality tooling, all wired and verified.
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-45cdf5?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)
@@ -24,7 +24,7 @@ Start every mobile project on solid ground: flavors, OAuth2 sessions, bloc state
 | --- | --- |
 | State management | `flutter_bloc`: `SessionBloc`, `ThemeCubit`, `LocaleCubit` app-wide, a `Bloc`/`Cubit` per screen |
 | Navigation | `go_router` with a session-driven redirect guard and deep link support |
-| Networking | `dio` behind a multi-client factory, single-flight OAuth2 refresh and retry on 401 |
+| Networking | `dio` behind a multi-client factory, opaque token auth with proactive expiry checks and single-flight refresh |
 | Errors | Sealed `AppException` hierarchy and a hand-rolled `Result<T>`, no exceptions across layers |
 | DI | `get_it`, plain constructor injection |
 | Storage | `shared_preferences` for settings, `flutter_secure_storage` for tokens |
@@ -88,12 +88,12 @@ lib/
 └── shared/widgets/                  adaptive, buttons, feedback, error views
 ```
 
-The session flow is the backbone: `AuthInterceptor` refreshes expired access tokens once for all concurrent requests, `SessionManager` persists and rotates tokens, `SessionBloc` exposes the session to the UI, and the router redirects based on it. A refresh failure ends the session gracefully with a localized notice, never a crash.
+The session flow is the backbone: the backend issues an opaque access token with an `expires_at` timestamp, `AuthInterceptor` checks that expiry before every request and refreshes stale tokens once for all concurrent requests (with a 401 retry as fallback), `SessionManager` persists and rotates tokens, `SessionBloc` exposes the session to the UI, and the router redirects based on it. A refresh failure ends the session gracefully with a localized notice, never a crash.
 
 ## Configuration checklist
 
 - [ ] Run the `project-setup` skill (or follow `.claude/skills/project-setup/SKILL.md` manually)
-- [ ] Set API base URLs and the OAuth token endpoint in `lib/main_dev.dart` and `lib/main_prod.dart`
+- [ ] Set API base URLs in `lib/main_dev.dart` and `lib/main_prod.dart`, and auth endpoint paths via `AuthEndpoints` if they differ from the `/auth` defaults
 - [ ] `flutterfire configure` per flavor, paste into `lib/core/config/firebase/`, flip `configured` to `true`
 - [ ] Replace `assets/branding/` images, then `make icons splash`
 - [ ] Point deep link hosts at your domains (Gradle placeholders, iOS `DEEP_LINK_HOST`)
