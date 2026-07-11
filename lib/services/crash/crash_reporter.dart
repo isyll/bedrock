@@ -6,7 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 
 final class CrashReporter {
-  CrashReporter({this._logger = const AppLogger('CrashReporter')});
+  CrashReporter({this._logger = const .new('CrashReporter')});
 
   final AppLogger _logger;
 

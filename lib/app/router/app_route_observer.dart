@@ -2,7 +2,7 @@ import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:flutter/widgets.dart';
 
 final class AppRouteObserver extends NavigatorObserver {
-  AppRouteObserver({this._logger = const AppLogger('Router')});
+  AppRouteObserver({this._logger = const .new('Router')});
 
   final AppLogger _logger;
 

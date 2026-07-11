@@ -51,7 +51,7 @@ final class ApiClientFactory {
   ApiClient create({
     required String baseUrl,
     bool authenticated = true,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const .new(seconds: 30),
     Map<String, String> headers = const {},
     List<Interceptor> interceptors = const [],
   }) {

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 class StaggeredColumn extends StatelessWidget {
   const StaggeredColumn({
     required this.children,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.mainAxisSize = MainAxisSize.max,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.mainAxisAlignment = .start,
+    this.mainAxisSize = .max,
+    this.crossAxisAlignment = .center,
     this.interval = AppMotion.staggerInterval,
-    this.initialDelay = Duration.zero,
+    this.initialDelay = .zero,
     super.key,
   });
 

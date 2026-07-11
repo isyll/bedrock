@@ -16,7 +16,7 @@ final class AuthRepository {
     required this._api,
     required this._session,
     required this._storage,
-    this._logger = const AppLogger('AuthRepository'),
+    this._logger = const .new('AuthRepository'),
   });
 
   final AuthApi _api;

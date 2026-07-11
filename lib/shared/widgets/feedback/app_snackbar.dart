@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 void showAppSnackBar(
   BuildContext context,
   String message, {
-  SnackBarKind kind = SnackBarKind.info,
+  SnackBarKind kind = .info,
 }) {
   final colorScheme = context.colorScheme;
   final semantic = context.semanticColors;

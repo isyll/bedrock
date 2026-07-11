@@ -24,7 +24,7 @@ DioException unauthorizedDioException() {
 final class FakeBiometricsService implements BiometricsService {
   FakeBiometricsService({
     this.supported = true,
-    this.authResult = BiometricAuthResult.success,
+    this.authResult = .success,
   });
 
   bool supported;

@@ -18,7 +18,7 @@ final class PushNotificationsService {
   PushNotificationsService({
     this.onOpenRoute,
     this.onTokenChanged,
-    this._logger = const AppLogger('Push'),
+    this._logger = const .new('Push'),
   });
 
   static const _routeKey = 'route';

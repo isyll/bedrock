@@ -8,7 +8,7 @@ import 'package:geolocator/geolocator.dart';
 final class LocationService {
   const LocationService({
     required this._permissions,
-    this._logger = const AppLogger('Location'),
+    this._logger = const .new('Location'),
   });
 
   static const _defaultTimeout = Duration(seconds: 15);
@@ -17,7 +17,7 @@ final class LocationService {
   final AppLogger _logger;
 
   Future<Result<AppLocation>> currentLocation({
-    LocationAccuracy accuracy = LocationAccuracy.high,
+    LocationAccuracy accuracy = .high,
     Duration timeout = _defaultTimeout,
   }) {
     return _guarded(() async {
@@ -45,7 +45,7 @@ final class LocationService {
   Future<bool> openLocationSettings() => Geolocator.openLocationSettings();
 
   Stream<AppLocation> watchLocation({
-    LocationAccuracy accuracy = LocationAccuracy.high,
+    LocationAccuracy accuracy = .high,
     int distanceFilterMeters = 25,
   }) => Geolocator.getPositionStream(
     locationSettings: .new(

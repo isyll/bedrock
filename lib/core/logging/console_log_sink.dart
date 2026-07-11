@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 final class ConsoleLogSink implements LogSink {
   const ConsoleLogSink({
-    this.minimumLevel = kDebugMode ? LogLevel.debug : LogLevel.error,
+    this.minimumLevel = kDebugMode ? .debug : .error,
     this.useColors = kDebugMode,
     this.lineLength = 88,
     this.maxStackFrames = 8,

@@ -15,7 +15,7 @@ enum BiometricAuthResult {
 class BiometricsService {
   BiometricsService({
     LocalAuthentication? auth,
-    this._logger = const AppLogger('Biometrics'),
+    this._logger = const .new('Biometrics'),
   }) : _auth = auth ?? .new();
 
   final LocalAuthentication _auth;

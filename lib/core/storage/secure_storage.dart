@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
-  const SecureStorage({this._logger = const AppLogger('SecureStorage')});
+  const SecureStorage({this._logger = const .new('SecureStorage')});
 
   static const _storage = FlutterSecureStorage(
     aOptions: .new(migrateWithBackup: true),

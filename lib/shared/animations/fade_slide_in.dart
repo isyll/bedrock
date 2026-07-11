@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 class FadeSlideIn extends StatefulWidget {
   const FadeSlideIn({
     required this.child,
-    this.delay = Duration.zero,
+    this.delay = .zero,
     this.duration = AppMotion.longDuration,
     this.curve = AppMotion.decelerate,
-    this.offset = const Offset(0, 0.08),
+    this.offset = const .new(0, 0.08),
     super.key,
   });
 

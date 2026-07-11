@@ -63,7 +63,7 @@ final class MediaPickerService {
   }
 
   Future<Result<PickedFile?>> takePhoto({
-    CameraDevice preferredCamera = CameraDevice.rear,
+    CameraDevice preferredCamera = .rear,
   }) {
     return _guarded(() async {
       await _ensurePermission(.camera);

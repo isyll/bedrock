@@ -4,7 +4,7 @@ import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:dio/dio.dart';
 
 final class LoggingInterceptor extends Interceptor {
-  const LoggingInterceptor({this._logger = const AppLogger('Http')});
+  const LoggingInterceptor({this._logger = const .new('Http')});
 
   static const _startedAtKey = 'log.started_at';
   static const _maxBodyLength = 2048;

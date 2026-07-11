@@ -14,7 +14,7 @@ final class SessionManager {
     required this._storage,
     Dio? tokenClient,
     LocaleResolver? localeResolver,
-    this._logger = const AppLogger('SessionManager'),
+    this._logger = const .new('SessionManager'),
   }) : _config = config,
        _tokenClient =
            tokenClient ??

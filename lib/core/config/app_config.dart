@@ -5,7 +5,7 @@ final class AppConfig {
     required this.flavor,
     required this.appName,
     required this.apiBaseUrl,
-    this.authEndpoints = const AuthEndpoints(),
+    this.authEndpoints = const .new(),
     this.firebaseOptions,
     this.deepLinkScheme = 'bedrock',
     this.deepLinkHost = '',

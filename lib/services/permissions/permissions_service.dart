@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart'
 
 final class PermissionsService {
   const PermissionsService({
-    this._logger = const AppLogger('Permissions'),
+    this._logger = const .new('Permissions'),
   });
 
   final AppLogger _logger;
@@ -35,11 +35,10 @@ final class PermissionsService {
   PermissionResult _mapStatus(permission_handler.PermissionStatus status) =>
       switch (status) {
         .granted => .granted,
-        permission_handler.PermissionStatus.limited => .limited,
-        permission_handler.PermissionStatus.provisional => .granted,
-        permission_handler.PermissionStatus.denied => .denied,
-        permission_handler.PermissionStatus.permanentlyDenied =>
-          .permanentlyDenied,
-        permission_handler.PermissionStatus.restricted => .restricted,
+        .limited => .limited,
+        .provisional => .granted,
+        .denied => .denied,
+        .permanentlyDenied => .permanentlyDenied,
+        .restricted => .restricted,
       };
 }

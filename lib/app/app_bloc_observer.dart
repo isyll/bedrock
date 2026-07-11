@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 final class AppBlocObserver extends BlocObserver {
-  const AppBlocObserver({this._logger = const AppLogger('Bloc')});
+  const AppBlocObserver({this._logger = const .new('Bloc')});
 
   final AppLogger _logger;
 
