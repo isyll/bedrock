@@ -10,7 +10,9 @@ import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:bedrock/services/crash/crash_reporter.dart';
+import 'package:bedrock/services/media/media_picker_service.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
+import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -64,5 +66,9 @@ Future<void> configureDependencies(
         onOpenRoute: (route) => getIt<AppRouter>().router.go(route),
       ),
       dispose: (service) => service.dispose(),
+    )
+    ..registerLazySingleton<PermissionsService>(PermissionsService.new)
+    ..registerLazySingleton<MediaPickerService>(
+      () => MediaPickerService(permissions: getIt()),
     );
 }

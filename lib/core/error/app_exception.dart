@@ -50,6 +50,12 @@ final class StorageException extends AppException {
   const StorageException(super.message);
 }
 
+final class PermissionException extends AppException {
+  const PermissionException(super.message, {this.permanentlyDenied = false});
+
+  final bool permanentlyDenied;
+}
+
 final class UnexpectedException extends AppException {
   const UnexpectedException(super.message, {this.cause, this.stackTrace});
 

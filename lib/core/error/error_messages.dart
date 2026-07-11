@@ -8,6 +8,9 @@ extension AppExceptionMessage on AppException {
     NetworkException() => l10n.errorNetworkMessage,
     UnauthorizedException() => l10n.errorUnauthorizedMessage,
     ValidationException() => l10n.errorValidationMessage,
+    PermissionException(permanentlyDenied: true) =>
+      l10n.errorPermissionPermanentlyDeniedMessage,
+    PermissionException() => l10n.errorPermissionDeniedMessage,
     ApiException(:final message) when message.isNotEmpty => message,
     _ => l10n.errorGenericMessage,
   };

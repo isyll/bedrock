@@ -37,6 +37,9 @@
   "errorTimeoutMessage": "La requête a expiré. Veuillez réessayer.",
   "errorUnauthorizedMessage": "Identifiants invalides. Veuillez réessayer.",
   "errorValidationMessage": "Certains champs sont invalides. Veuillez les vérifier.",
+  "errorPermissionDeniedMessage": "Cette fonctionnalité nécessite une autorisation que vous n'avez pas encore accordée.",
+  "errorPermissionPermanentlyDeniedMessage": "Autorisation refusée. Activez-la dans les réglages du système pour utiliser cette fonctionnalité.",
+  "openSettingsButton": "Ouvrir les réglages",
   "sessionExpiredMessage": "Votre session a expiré. Veuillez vous reconnecter.",
   "emptyTitle": "Rien pour le moment",
   "emptyMessage": "Aucun contenu à afficher."
