@@ -9,17 +9,22 @@ import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:bedrock/services/crash/crash_reporter.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt getIt = GetIt.instance;
 
-Future<void> configureDependencies(AppConfig config) async {
+Future<void> configureDependencies(
+  AppConfig config, {
+  CrashReporter? crashReporter,
+}) async {
   final prefs = await SharedPreferences.getInstance();
 
   getIt
     ..registerSingleton<AppConfig>(config)
+    ..registerSingleton<CrashReporter>(crashReporter ?? CrashReporter())
     ..registerSingleton<KeyValueStorage>(KeyValueStorage(prefs))
     ..registerSingleton<SecureStorage>(const SecureStorage())
     ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: getIt()))

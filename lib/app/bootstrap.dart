@@ -6,6 +6,7 @@ import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/di/injector.dart';
 import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
+import 'package:bedrock/services/crash/crash_reporter.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
 import 'package:bedrock/shared/widgets/error/app_error_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,13 +21,18 @@ const _logger = AppLogger('Bootstrap');
 Future<void> bootstrap(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  _configureErrorHandling();
+  final crashReporter = CrashReporter();
+  _configureErrorHandling(crashReporter);
   await _configureSystemUi();
 
   final firebaseReady = await _initializeFirebase(config);
 
-  await configureDependencies(config);
-  await getIt<AuthRepository>().restore();
+  await configureDependencies(config, crashReporter: crashReporter);
+  await crashReporter.initialize(firebaseAvailable: firebaseReady);
+
+  final authRepository = getIt<AuthRepository>();
+  await authRepository.restore();
+  _bindCrashReportingToSession(crashReporter, authRepository);
 
   Bloc.observer = const AppBlocObserver();
 
@@ -37,18 +43,38 @@ Future<void> bootstrap(AppConfig config) async {
   }
 }
 
-void _configureErrorHandling() {
+void _configureErrorHandling(CrashReporter crashReporter) {
   FlutterError.onError = (details) {
-    _logger.error('Flutter framework error', details.exception, details.stack);
-    if (kDebugMode) FlutterError.presentError(details);
+    if (kDebugMode) {
+      FlutterError.presentError(details);
+      return;
+    }
+    crashReporter.recordFlutterError(details);
   };
 
   PlatformDispatcher.instance.onError = (error, stackTrace) {
-    _logger.error('Uncaught platform error', error, stackTrace);
+    if (kDebugMode) {
+      _logger.error('Uncaught platform error', error, stackTrace);
+    } else {
+      crashReporter.recordError(error, stackTrace, fatal: true);
+    }
     return true;
   };
 
   ErrorWidget.builder = (details) => AppErrorWidget(details: details);
+}
+
+void _bindCrashReportingToSession(
+  CrashReporter crashReporter,
+  AuthRepository authRepository,
+) {
+  crashReporter.setUserIdentifier(authRepository.currentUser?.id);
+  authRepository.status.listen((status) {
+    final userId = status == AuthStatus.authenticated
+        ? authRepository.currentUser?.id
+        : null;
+    crashReporter.setUserIdentifier(userId);
+  });
 }
 
 Future<void> _configureSystemUi() async {
@@ -65,7 +91,7 @@ Future<void> _configureSystemUi() async {
 Future<bool> _initializeFirebase(AppConfig config) async {
   final options = config.firebaseOptions;
   if (options == null) {
-    _logger.info('Firebase is not configured, push notifications disabled');
+    _logger.info('Firebase is not configured, related services disabled');
     return false;
   }
 
