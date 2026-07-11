@@ -1,0 +1,57 @@
+{
+  "@@locale": "en",
+  "appTitle": "Bedrock",
+  "signInTitle": "Welcome back",
+  "signInSubtitle": "Sign in to your account to continue",
+  "emailLabel": "Email",
+  "emailHint": "you@example.com",
+  "passwordLabel": "Password",
+  "signInButton": "Sign in",
+  "emailRequired": "Email is required",
+  "emailInvalid": "Enter a valid email address",
+  "passwordRequired": "Password is required",
+  "passwordTooShort": "Password must be at least {minLength} characters",
+  "@passwordTooShort": {
+    "placeholders": {
+      "minLength": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTitle": "Home",
+  "welcomeMessage": "Welcome, {name}",
+  "@welcomeMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeBody": "You are signed in. Start building your app from here.",
+  "settingsTitle": "Settings",
+  "appearanceSection": "Appearance",
+  "themeLabel": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "languageLabel": "Language",
+  "languageSystem": "System",
+  "languageEnglish": "English",
+  "languageFrench": "French",
+  "accountSection": "Account",
+  "signOutButton": "Sign out",
+  "signOutConfirmTitle": "Sign out",
+  "signOutConfirmMessage": "Are you sure you want to sign out?",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "retry": "Retry",
+  "loading": "Loading",
+  "errorGenericMessage": "Something went wrong. Please try again.",
+  "errorNetworkMessage": "No internet connection. Check your network.",
+  "errorTimeoutMessage": "The request timed out. Please try again.",
+  "errorUnauthorizedMessage": "Invalid credentials. Please try again.",
+  "errorValidationMessage": "Some fields are invalid. Please review them.",
+  "sessionExpiredMessage": "Your session has expired. Please sign in again.",
+  "emptyTitle": "Nothing here yet",
+  "emptyMessage": "There is no content to display."
+}

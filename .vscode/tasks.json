@@ -1,0 +1,69 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "flutter: pub get",
+      "type": "shell",
+      "command": "flutter pub get",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: gen l10n",
+      "type": "shell",
+      "command": "flutter gen-l10n",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: analyze",
+      "type": "shell",
+      "command": "flutter analyze --no-pub",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "dart: format",
+      "type": "shell",
+      "command": "dart format lib",
+      "problemMatcher": []
+    },
+    {
+      "label": "dart: fix",
+      "type": "shell",
+      "command": "dart fix --apply",
+      "problemMatcher": []
+    },
+    {
+      "label": "build: apk (prod)",
+      "type": "shell",
+      "command": "flutter build apk --release --flavor prod --target lib/main_prod.dart",
+      "problemMatcher": []
+    },
+    {
+      "label": "build: appbundle (prod)",
+      "type": "shell",
+      "command": "flutter build appbundle --release --flavor prod --target lib/main_prod.dart",
+      "problemMatcher": []
+    },
+    {
+      "label": "gen: launcher icons",
+      "type": "shell",
+      "command": "dart run flutter_launcher_icons",
+      "problemMatcher": []
+    },
+    {
+      "label": "gen: native splash",
+      "type": "shell",
+      "command": "dart run flutter_native_splash:create",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: clean",
+      "type": "shell",
+      "command": "flutter clean",
+      "problemMatcher": []
+    }
+  ]
+}

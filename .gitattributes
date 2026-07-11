@@ -1,0 +1,19 @@
+* text=auto
+
+*.dart text
+*.yaml text
+*.yml text
+*.md text
+*.arb text
+*.xml text
+*.kts text
+*.swift text
+*.sh text eol=lf
+.githooks/* text eol=lf
+gradlew text eol=lf
+
+*.png binary
+*.jpg binary
+*.jar binary
+*.keystore binary
+*.jks binary

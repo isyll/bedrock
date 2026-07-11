@@ -1,0 +1,40 @@
+{
+  "cSpell.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.rulers": [80],
+  "dart.previewCommitCharacters": true,
+  "dart.renameFilesWithClasses": "prompt",
+  "dart.flutterGenerateLocalizationsOnSave": "all",
+  "dart.lineLength": 80,
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.selectionHighlight": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "files.associations": {
+    "*.arb": "json"
+  },
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/lib/core/l10n": true,
+    "**/pubspec.lock": true
+  },
+  "markdownlint.configFile": ".markdownlint.jsonc",
+  "chat.useAgentsMdFile": true,
+  "chat.promptFiles": true,
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+  }
+}

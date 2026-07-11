@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+echo "pre-commit: checking format"
+dart format --set-exit-if-changed lib
+
+echo "pre-commit: analyzing"
+flutter analyze --no-pub
+
+if [ -d test ]; then
+  echo "pre-commit: running tests"
+  flutter test
+fi
+
+echo "pre-commit: all checks passed"
