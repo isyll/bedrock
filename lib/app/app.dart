@@ -18,10 +18,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
     providers: [
-      BlocProvider<SessionBloc>.value(value: getIt()),
-      BlocProvider<ThemeCubit>.value(value: getIt()),
-      BlocProvider<LocaleCubit>.value(value: getIt()),
-      BlocProvider<AppLockCubit>.value(value: getIt()),
+      BlocProvider<SessionBloc>.value(value: sl()),
+      BlocProvider<ThemeCubit>.value(value: sl()),
+      BlocProvider<LocaleCubit>.value(value: sl()),
+      BlocProvider<AppLockCubit>.value(value: sl()),
     ],
     child: const AppView(),
   );
@@ -36,7 +36,7 @@ class AppView extends StatelessWidget {
     final locale = context.watch<LocaleCubit>().state;
 
     return MaterialApp.router(
-      routerConfig: getIt<AppRouter>().router,
+      routerConfig: sl<AppRouter>().router,
       onGenerateTitle: (context) => context.l10n.appTitle,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

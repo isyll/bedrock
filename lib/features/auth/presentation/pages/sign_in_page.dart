@@ -12,7 +12,7 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SignInCubit(authRepository: getIt()),
+      create: (_) => SignInCubit(authRepository: sl()),
       child: Scaffold(
         body: SafeArea(
           child: Center(

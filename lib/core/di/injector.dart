@@ -18,7 +18,7 @@ import 'package:bedrock/services/notifications/push_notifications_service.dart';
 import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:get_it/get_it.dart';
 
-final GetIt getIt = .instance;
+final GetIt sl = .instance;
 
 Future<void> configureDependencies(
   AppConfig config, {
@@ -26,64 +26,64 @@ Future<void> configureDependencies(
 }) async {
   final keyValueStorage = await KeyValueStorage.create();
 
-  getIt
+  sl
     ..registerSingleton<AppConfig>(config)
     ..registerSingleton<CrashReporter>(crashReporter ?? CrashReporter())
     ..registerSingleton<KeyValueStorage>(keyValueStorage)
     ..registerSingleton<SecureStorage>(const SecureStorage())
-    ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: getIt()))
-    ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: getIt()))
+    ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: sl()))
+    ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: sl()))
     ..registerLazySingleton<BiometricsService>(BiometricsService.new)
     ..registerLazySingleton<AppLockCubit>(
-      () => AppLockCubit(storage: getIt(), biometrics: getIt()),
+      () => AppLockCubit(storage: sl(), biometrics: sl()),
       dispose: (cubit) => cubit.close(),
     )
     ..registerLazySingleton<SessionManager>(
       () => SessionManager(
-        config: getIt(),
-        storage: getIt(),
-        localeResolver: () => getIt<LocaleCubit>().languageCode,
+        config: sl(),
+        storage: sl(),
+        localeResolver: () => sl<LocaleCubit>().languageCode,
       ),
       dispose: (manager) => manager.dispose(),
     )
     ..registerLazySingleton<ApiClientFactory>(
       () => ApiClientFactory(
-        config: getIt(),
-        session: getIt(),
-        localeResolver: () => getIt<LocaleCubit>().languageCode,
+        config: sl(),
+        session: sl(),
+        localeResolver: () => sl<LocaleCubit>().languageCode,
       ),
     )
     ..registerLazySingleton<ApiClient>(
-      () => getIt<ApiClientFactory>().backend(),
+      () => sl<ApiClientFactory>().backend(),
       dispose: (client) => client.close(),
     )
     ..registerLazySingleton<AuthApi>(
       () => config.useFakeAuth
           ? const FakeAuthApi()
-          : HttpAuthApi(client: getIt(), config: getIt()),
+          : HttpAuthApi(client: sl(), config: sl()),
     )
     ..registerLazySingleton<AuthRepository>(
-      () => AuthRepository(api: getIt(), session: getIt(), storage: getIt()),
+      () => AuthRepository(api: sl(), session: sl(), storage: sl()),
     )
     ..registerLazySingleton<SessionBloc>(
-      () => SessionBloc(authRepository: getIt()),
+      () => SessionBloc(authRepository: sl()),
       dispose: (bloc) => bloc.close(),
     )
     ..registerLazySingleton<AppRouter>(
-      () => AppRouter(sessionBloc: getIt()),
+      () => AppRouter(sessionBloc: sl()),
       dispose: (router) => router.dispose(),
     )
     ..registerLazySingleton<PushNotificationsService>(
       () => PushNotificationsService(
-        onOpenRoute: (route) => getIt<AppRouter>().router.go(route),
+        onOpenRoute: (route) => sl<AppRouter>().router.go(route),
       ),
       dispose: (service) => service.dispose(),
     )
     ..registerLazySingleton<PermissionsService>(PermissionsService.new)
     ..registerLazySingleton<MediaPickerService>(
-      () => MediaPickerService(permissions: getIt()),
+      () => MediaPickerService(permissions: sl()),
     )
     ..registerLazySingleton<LocationService>(
-      () => LocationService(permissions: getIt()),
+      () => LocationService(permissions: sl()),
     );
 }

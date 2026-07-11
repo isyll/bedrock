@@ -32,7 +32,7 @@ Future<void> bootstrap(AppConfig config) async {
 
   await crashReporter.initialize(firebaseAvailable: firebaseReady);
 
-  final authRepository = getIt<AuthRepository>();
+  final authRepository = sl<AuthRepository>();
   await authRepository.restore();
   _bindCrashReportingToSession(crashReporter, authRepository);
 
@@ -41,7 +41,7 @@ Future<void> bootstrap(AppConfig config) async {
   runApp(const App());
 
   if (firebaseReady) {
-    unawaited(getIt<PushNotificationsService>().initialize());
+    unawaited(sl<PushNotificationsService>().initialize());
   }
 }
 
