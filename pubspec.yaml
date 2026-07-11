@@ -26,6 +26,7 @@ dependencies:
   go_router: ^17.3.0
   image_picker: ^1.2.0
   intl: any
+  lottie: ^3.3.0
   permission_handler: ^12.0.1
   shared_preferences: ^2.5.5
 
@@ -41,3 +42,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/animations/
