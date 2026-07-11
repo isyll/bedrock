@@ -1,6 +1,4 @@
 import 'package:bedrock/core/logging/app_logger.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
 
 enum BiometricAuthResult {
@@ -14,7 +12,7 @@ enum BiometricAuthResult {
   bool get isSuccess => this == success;
 }
 
-final class BiometricsService {
+class BiometricsService {
   BiometricsService({
     LocalAuthentication? auth,
     this._logger = const AppLogger('Biometrics'),
@@ -26,7 +24,7 @@ final class BiometricsService {
   Future<bool> isSupported() async {
     try {
       return await _auth.isDeviceSupported();
-    } on PlatformException catch (error) {
+    } on Exception catch (error) {
       _logger.warning('Failed to query biometric support', error);
       return false;
     }
@@ -35,7 +33,7 @@ final class BiometricsService {
   Future<List<BiometricType>> enrolledBiometrics() async {
     try {
       return await _auth.getAvailableBiometrics();
-    } on PlatformException catch (error) {
+    } on Exception catch (error) {
       _logger.warning('Failed to query enrolled biometrics', error);
       return const [];
     }
@@ -45,23 +43,29 @@ final class BiometricsService {
     try {
       final didAuthenticate = await _auth.authenticate(
         localizedReason: reason,
-        options: const AuthenticationOptions(stickyAuth: true),
+        persistAcrossBackgrounding: true,
       );
       return didAuthenticate
           ? BiometricAuthResult.success
           : BiometricAuthResult.failed;
-    } on PlatformException catch (error) {
-      _logger.info('Biometric authentication error: ${error.code}');
-      return switch (error.code) {
-        auth_error.notEnrolled ||
-        auth_error.passcodeNotSet => BiometricAuthResult.notEnrolled,
-        auth_error.lockedOut => BiometricAuthResult.lockedOut,
-        auth_error.permanentlyLockedOut =>
-          BiometricAuthResult.permanentlyLockedOut,
-        auth_error.notAvailable ||
-        auth_error.otherOperatingSystem => BiometricAuthResult.unavailable,
-        _ => BiometricAuthResult.failed,
-      };
+    } on LocalAuthException catch (error) {
+      _logger.info('Biometric authentication error: ${error.code.name}');
+      return _mapCode(error.code);
     }
+  }
+
+  BiometricAuthResult _mapCode(LocalAuthExceptionCode code) {
+    return switch (code) {
+      LocalAuthExceptionCode.noCredentialsSet ||
+      LocalAuthExceptionCode.noBiometricsEnrolled =>
+        BiometricAuthResult.notEnrolled,
+      LocalAuthExceptionCode.noBiometricHardware ||
+      LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable ||
+      LocalAuthExceptionCode.uiUnavailable => BiometricAuthResult.unavailable,
+      LocalAuthExceptionCode.temporaryLockout => BiometricAuthResult.lockedOut,
+      LocalAuthExceptionCode.biometricLockout =>
+        BiometricAuthResult.permanentlyLockedOut,
+      _ => BiometricAuthResult.failed,
+    };
   }
 }

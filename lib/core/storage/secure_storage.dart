@@ -3,7 +3,7 @@ import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final class SecureStorage {
+class SecureStorage {
   const SecureStorage({this._logger = const AppLogger('SecureStorage')});
 
   static const _storage = FlutterSecureStorage(

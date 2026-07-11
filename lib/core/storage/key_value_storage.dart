@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-final class KeyValueStorage {
+class KeyValueStorage {
   const KeyValueStorage(this._prefs);
 
   final SharedPreferencesWithCache _prefs;

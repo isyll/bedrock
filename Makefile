@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
-.PHONY: help get l10n format format-check analyze fix check run-dev run-prod \
-	apk-dev apk aab ipa icons splash clean upgrade outdated hooks
+.PHONY: help get l10n format format-check analyze fix test check run-dev \
+	run-prod apk-dev apk aab ipa icons splash clean upgrade outdated hooks
 
 help:
 	@echo "Available targets:"
@@ -9,7 +9,8 @@ help:
 	@echo "  format       Format Dart code"
 	@echo "  analyze      Run static analysis"
 	@echo "  fix          Apply automated fixes"
-	@echo "  check        Format check + analyze"
+	@echo "  test         Run unit and widget tests"
+	@echo "  check        Format check + analyze + tests"
 	@echo "  run-dev      Run the dev flavor"
 	@echo "  run-prod     Run the prod flavor"
 	@echo "  apk-dev      Build dev debug APK"
@@ -28,10 +29,10 @@ l10n:
 	flutter gen-l10n
 
 format:
-	dart format lib
+	dart format lib test
 
 format-check:
-	dart format --set-exit-if-changed lib
+	dart format --set-exit-if-changed lib test
 
 analyze:
 	flutter analyze --no-pub
@@ -39,7 +40,10 @@ analyze:
 fix:
 	dart fix --apply
 
-check: format-check analyze
+test:
+	flutter test
+
+check: format-check analyze test
 
 run-dev:
 	flutter run --flavor dev --target lib/main_dev.dart

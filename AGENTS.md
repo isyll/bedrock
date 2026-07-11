@@ -9,7 +9,8 @@ Production-grade Flutter template for Android and iOS, paired with a REST API ba
 | Fetch dependencies | `flutter pub get` |
 | Generate localizations | `flutter gen-l10n` |
 | Analyze | `flutter analyze --no-pub` |
-| Format | `dart format lib` |
+| Format | `dart format lib test` |
+| Test | `flutter test` |
 | Run dev | `flutter run --flavor dev --target lib/main_dev.dart` |
 | Run prod | `flutter run --flavor prod --target lib/main_prod.dart` |
 | Build prod APK | `flutter build apk --release --flavor prod --target lib/main_prod.dart` |
@@ -57,6 +58,7 @@ lib/
 - `dart format` with the default 80-column width is the only accepted formatting.
 - New features follow the existing feature layout and register dependencies in `injector.dart`.
 - Strings shown to users always go through l10n; add keys to both `app_en.arb` and `app_fr.arb`.
+- Tests mirror the `lib/` layout under `test/`. Shared hand-written fakes live in `test/helpers/fakes.dart`; no mocking framework. Bloc and cubit tests use `bloc_test`. HTTP is faked at the Dio `HttpClientAdapter` seam. Classes that tests need to fake stay non-final.
 - Secrets never enter the repo: `android/key.properties`, Firebase config files, and real API keys are gitignored. Firebase options placeholders live in `lib/core/config/firebase/` and are replaced per project via FlutterFire CLI.
 - Do not add dependencies without strong justification; prefer hand-written code for simple concerns.
 
