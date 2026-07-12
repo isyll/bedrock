@@ -58,18 +58,20 @@ final class AuthTokens extends Equatable {
 
   static DateTime? parseExpiry(Map<String, dynamic> json) {
     final expiresAt = json['expires_at'] ?? json['expired_at'];
-    switch (expiresAt) {
-      case final String value:
-        return .tryParse(value)?.toUtc();
-      case final num value:
-        return _epochToDateTime(value);
-    }
 
-    final expiresIn = json['expires_in'];
-    if (expiresIn is num) {
-      return .now().toUtc().add(.new(seconds: expiresIn.toInt()));
-    }
-    return null;
+    return switch (expiresAt) {
+      final String value => .tryParse(value)?.toUtc(),
+      final num value => _epochToDateTime(value),
+      _ => switch (json['expires_in']) {
+        final num value => .now().toUtc().add(
+          .new(seconds: value.toInt()),
+        ),
+        final String value => .now().toUtc().add(
+          .new(seconds: .tryParse(value) ?? 0),
+        ),
+        _ => null,
+      },
+    };
   }
 
   static Map<String, dynamic> unwrapPayload(Map<String, dynamic> json) {
