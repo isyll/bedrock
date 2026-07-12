@@ -28,18 +28,18 @@ Future<void> configureDependencies(
 
   sl
     ..registerSingleton<AppConfig>(config)
-    ..registerSingleton<CrashReporter>(crashReporter ?? CrashReporter())
+    ..registerSingleton<CrashReporter>(crashReporter ?? .new())
     ..registerSingleton<KeyValueStorage>(keyValueStorage)
-    ..registerSingleton<SecureStorage>(const SecureStorage())
-    ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(storage: sl()))
-    ..registerLazySingleton<LocaleCubit>(() => LocaleCubit(storage: sl()))
+    ..registerSingleton<SecureStorage>(const .new())
+    ..registerLazySingleton<ThemeCubit>(() => .new(storage: sl()))
+    ..registerLazySingleton<LocaleCubit>(() => .new(storage: sl()))
     ..registerLazySingleton<BiometricsService>(BiometricsService.new)
     ..registerLazySingleton<AppLockCubit>(
-      () => AppLockCubit(storage: sl(), biometrics: sl()),
+      () => .new(storage: sl(), biometrics: sl()),
       dispose: (cubit) => cubit.close(),
     )
     ..registerLazySingleton<SessionManager>(
-      () => SessionManager(
+      () => .new(
         config: sl(),
         storage: sl(),
         localeResolver: () => sl<LocaleCubit>().languageCode,
@@ -47,7 +47,7 @@ Future<void> configureDependencies(
       dispose: (manager) => manager.dispose(),
     )
     ..registerLazySingleton<ApiClientFactory>(
-      () => ApiClientFactory(
+      () => .new(
         config: sl(),
         session: sl(),
         localeResolver: () => sl<LocaleCubit>().languageCode,
@@ -63,27 +63,27 @@ Future<void> configureDependencies(
           : HttpAuthApi(client: sl(), config: sl()),
     )
     ..registerLazySingleton<AuthRepository>(
-      () => AuthRepository(api: sl(), session: sl(), storage: sl()),
+      () => .new(api: sl(), session: sl(), storage: sl()),
     )
     ..registerLazySingleton<SessionBloc>(
-      () => SessionBloc(authRepository: sl()),
+      () => .new(authRepository: sl()),
       dispose: (bloc) => bloc.close(),
     )
     ..registerLazySingleton<AppRouter>(
-      () => AppRouter(sessionBloc: sl()),
+      () => .new(sessionBloc: sl()),
       dispose: (router) => router.dispose(),
     )
     ..registerLazySingleton<PushNotificationsService>(
-      () => PushNotificationsService(
+      () => .new(
         onOpenRoute: (route) => sl<AppRouter>().router.go(route),
       ),
       dispose: (service) => service.dispose(),
     )
     ..registerLazySingleton<PermissionsService>(PermissionsService.new)
     ..registerLazySingleton<MediaPickerService>(
-      () => MediaPickerService(permissions: sl()),
+      () => .new(permissions: sl()),
     )
     ..registerLazySingleton<LocationService>(
-      () => LocationService(permissions: sl()),
+      () => .new(permissions: sl()),
     );
 }

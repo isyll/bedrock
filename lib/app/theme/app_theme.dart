@@ -280,21 +280,21 @@ abstract final class AppTheme {
       ),
       labelStyle: WidgetStateTextStyle.resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
-          return TextStyle(color: _disabledForeground(scheme));
+          return .new(color: _disabledForeground(scheme));
         }
-        return TextStyle(color: scheme.onSurfaceVariant);
+        return .new(color: scheme.onSurfaceVariant);
       }),
       floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
-          return TextStyle(color: _disabledForeground(scheme));
+          return .new(color: _disabledForeground(scheme));
         }
         if (states.contains(WidgetState.error)) {
-          return TextStyle(color: scheme.error);
+          return .new(color: scheme.error);
         }
         if (states.contains(WidgetState.focused)) {
-          return TextStyle(color: scheme.primary);
+          return .new(color: scheme.primary);
         }
-        return TextStyle(color: scheme.onSurfaceVariant);
+        return .new(color: scheme.onSurfaceVariant);
       }),
       hintStyle: .new(color: scheme.onSurfaceVariant),
       prefixIconColor: _decorationIconColor(scheme),

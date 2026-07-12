@@ -31,7 +31,7 @@ void main() {
   group('SignInCubit', () {
     blocTest<SignInCubit, SignInState>(
       'emits submitting then success on valid credentials',
-      build: () => SignInCubit(authRepository: repository),
+      build: () => .new(authRepository: repository),
       setUp: () => api.signInResult = .new(
         user: ScriptedAuthApi.demoUser,
         tokens: .new(
@@ -50,7 +50,7 @@ void main() {
 
     blocTest<SignInCubit, SignInState>(
       'emits submitting then a localized failure on rejection',
-      build: () => SignInCubit(authRepository: repository),
+      build: () => .new(authRepository: repository),
       setUp: () => api.signInError = unauthorizedDioException(),
       act: (cubit) =>
           cubit.submit(email: 'demo@example.com', password: 'wrong'),
@@ -68,8 +68,8 @@ void main() {
 
     blocTest<SignInCubit, SignInState>(
       'ignores submissions while one is in flight',
-      build: () => SignInCubit(authRepository: repository),
-      seed: () => const SignInState(isSubmitting: true),
+      build: () => .new(authRepository: repository),
+      seed: () => const .new(isSubmitting: true),
       act: (cubit) =>
           cubit.submit(email: 'demo@example.com', password: 'password1'),
       expect: List.empty,
