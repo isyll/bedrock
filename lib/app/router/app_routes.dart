@@ -2,6 +2,7 @@ abstract final class AppRoutes {
   static const home = '/';
   static const signIn = '/sign-in';
   static const settings = '/settings';
+  static const about = '/settings/about';
 
   static const publicPaths = <String>{signIn};
 

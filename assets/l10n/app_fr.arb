@@ -57,5 +57,9 @@
   "updateButton": "Mettre à jour",
   "updateLaterButton": "Plus tard",
   "emptyTitle": "Rien pour le moment",
-  "emptyMessage": "Aucun contenu à afficher."
+  "emptyMessage": "Aucun contenu à afficher.",
+  "aboutTitle": "À propos",
+  "aboutVersion": "Version {version}",
+  "rateAppButton": "Évaluer l'application",
+  "licensesButton": "Licences open source"
 }

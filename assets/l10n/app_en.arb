@@ -71,5 +71,16 @@
   "updateButton": "Update",
   "updateLaterButton": "Later",
   "emptyTitle": "Nothing here yet",
-  "emptyMessage": "There is no content to display."
+  "emptyMessage": "There is no content to display.",
+  "aboutTitle": "About",
+  "aboutVersion": "Version {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "rateAppButton": "Rate the app",
+  "licensesButton": "Open source licenses"
 }

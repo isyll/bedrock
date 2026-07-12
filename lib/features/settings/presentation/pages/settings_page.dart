@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bedrock/app/router/app_routes.dart';
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:bedrock/core/l10n/app_localizations.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:bedrock/shared/widgets/adaptive/adaptive_dialogs.dart';
 import 'package:bedrock/shared/widgets/feedback/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -85,6 +87,15 @@ class SettingsPage extends StatelessWidget {
             style: .new(color: context.colorScheme.error),
           ),
           onTap: () => _confirmSignOut(context),
+        ),
+      ),
+      const SizedBox(height: 24),
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: Text(l10n.aboutTitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push(AppRoutes.about),
         ),
       ),
     ];
