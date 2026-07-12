@@ -36,5 +36,8 @@
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
-  }
+  },
+  "arb-editor.suppressedWarnings": [
+    "missing_metadata_for_key"
+  ]
 }
