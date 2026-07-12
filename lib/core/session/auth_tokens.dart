@@ -24,7 +24,7 @@ final class AuthTokens extends Equatable {
       throw const FormatException('Auth response is missing a refresh token');
     }
 
-    return AuthTokens(
+    return .new(
       accessToken: accessToken,
       refreshToken: refreshToken,
       expiresAt: parseExpiry(payload),

@@ -13,7 +13,7 @@ final class AppLocation extends Equatable {
   });
 
   factory AppLocation.fromPosition(Position position) {
-    return AppLocation(
+    return .new(
       latitude: position.latitude,
       longitude: position.longitude,
       timestamp: position.timestamp,
