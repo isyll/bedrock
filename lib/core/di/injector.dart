@@ -4,6 +4,8 @@ import 'package:bedrock/core/network/api_client.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
+import 'package:bedrock/features/app_update/data/app_version_api.dart';
+import 'package:bedrock/features/app_update/presentation/cubit/app_update_cubit.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
@@ -17,6 +19,7 @@ import 'package:bedrock/services/location/location_service.dart';
 import 'package:bedrock/services/media/media_picker_service.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
 import 'package:bedrock/services/permissions/permissions_service.dart';
+import 'package:bedrock/services/store/store_service.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt sl = .instance;
@@ -60,11 +63,25 @@ Future<void> configureDependencies(
         session: sl(),
         deviceInfo: sl<DeviceInfoService>().info,
         localeResolver: () => sl<LocaleCubit>().languageCode,
+        onUpdateRequired: () => sl<AppUpdateCubit>().notifyUpdateRequired(),
       ),
     )
     ..registerLazySingleton<ApiClient>(
       () => sl<ApiClientFactory>().backend(),
       dispose: (client) => client.close(),
+    )
+    ..registerLazySingleton<StoreService>(() => .new(config: sl()))
+    ..registerLazySingleton<AppVersionApi>(
+      () => .new(client: sl(), config: sl()),
+    )
+    ..registerLazySingleton<AppUpdateCubit>(
+      () => .new(
+        api: sl(),
+        deviceInfo: sl<DeviceInfoService>().info,
+        storage: sl(),
+        store: sl(),
+      ),
+      dispose: (cubit) => cubit.close(),
     )
     ..registerLazySingleton<AuthApi>(
       () => config.useFakeAuth

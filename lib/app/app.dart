@@ -1,8 +1,11 @@
+import 'package:bedrock/app/app_lifecycle_handler.dart';
 import 'package:bedrock/app/router/app_router.dart';
 import 'package:bedrock/app/theme/app_theme.dart';
 import 'package:bedrock/core/di/injector.dart';
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:bedrock/core/l10n/app_localizations.dart';
+import 'package:bedrock/features/app_update/presentation/cubit/app_update_cubit.dart';
+import 'package:bedrock/features/app_update/presentation/widgets/app_update_gate.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/security/presentation/widgets/app_lock_gate.dart';
@@ -22,6 +25,7 @@ class App extends StatelessWidget {
       BlocProvider<ThemeCubit>.value(value: sl()),
       BlocProvider<LocaleCubit>.value(value: sl()),
       BlocProvider<AppLockCubit>.value(value: sl()),
+      BlocProvider<AppUpdateCubit>.value(value: sl()),
     ],
     child: const AppView(),
   );
@@ -54,10 +58,14 @@ class AppView extends StatelessWidget {
             context.l10n.sessionExpiredMessage,
             kind: .error,
           ),
-          child: AppLockGate(
-            child: MediaQuery.withClampedTextScaling(
-              maxScaleFactor: 2,
-              child: child ?? const SizedBox.shrink(),
+          child: AppLifecycleHandler(
+            child: AppLockGate(
+              child: AppUpdateGate(
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: 2,
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              ),
             ),
           ),
         );

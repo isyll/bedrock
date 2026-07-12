@@ -7,6 +7,7 @@ extension AppExceptionMessage on AppException {
       l10n.errorTimeoutMessage,
     NetworkException() => l10n.errorNetworkMessage,
     UnauthorizedException() => l10n.errorUnauthorizedMessage,
+    UpgradeRequiredException() => l10n.updateRequiredMessage,
     ValidationException() => l10n.errorValidationMessage,
     PermissionException(permanentlyDenied: true) =>
       l10n.errorPermissionPermanentlyDeniedMessage,

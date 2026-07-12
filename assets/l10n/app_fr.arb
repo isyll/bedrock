@@ -50,6 +50,12 @@
   "errorLocationDisabledMessage": "Les services de localisation sont désactivés. Activez-les pour utiliser cette fonctionnalité.",
   "openSettingsButton": "Ouvrir les réglages",
   "sessionExpiredMessage": "Votre session a expiré. Veuillez vous reconnecter.",
+  "updateRequiredTitle": "Mise à jour requise",
+  "updateRequiredMessage": "Cette version de l'application n'est plus prise en charge. Mettez-la à jour pour continuer.",
+  "updateAvailableTitle": "Mise à jour disponible",
+  "updateAvailableMessage": "Une nouvelle version de l'application est disponible. Mettez-la à jour pour profiter des dernières améliorations.",
+  "updateButton": "Mettre à jour",
+  "updateLaterButton": "Plus tard",
   "emptyTitle": "Rien pour le moment",
   "emptyMessage": "Aucun contenu à afficher."
 }

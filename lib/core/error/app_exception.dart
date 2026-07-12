@@ -51,6 +51,11 @@ final class UnauthorizedException extends ApiException {
     : super(statusCode: 401);
 }
 
+final class UpgradeRequiredException extends ApiException {
+  const UpgradeRequiredException(super.message, {super.code})
+    : super(statusCode: 426);
+}
+
 final class UnexpectedException extends AppException {
   const UnexpectedException(super.message, {this.cause, this.stackTrace});
 

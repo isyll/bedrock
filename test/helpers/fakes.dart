@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bedrock/core/error/result.dart';
 import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
+import 'package:bedrock/features/app_update/data/app_version_api.dart';
+import 'package:bedrock/features/app_update/domain/app_version_status.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
 import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:bedrock/services/device/device_info.dart';
 import 'package:bedrock/services/device/device_info_service.dart';
+import 'package:bedrock/services/store/store_service.dart';
 import 'package:dio/dio.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -54,6 +58,34 @@ DioException unauthorizedDioException() {
       data: {'message': 'Invalid credentials'},
     ),
   );
+}
+
+final class FakeStoreService implements StoreService {
+  int openListingCalls = 0;
+  int requestReviewCalls = 0;
+  bool reviewAvailable = true;
+
+  @override
+  Future<void> openListing() async => openListingCalls++;
+
+  @override
+  Future<bool> requestReview() async {
+    requestReviewCalls++;
+    return reviewAvailable;
+  }
+}
+
+final class ScriptedVersionApi implements AppVersionApi {
+  ScriptedVersionApi(this.result);
+
+  Result<AppVersionStatus> result;
+  int fetchCalls = 0;
+
+  @override
+  Future<Result<AppVersionStatus>> fetchStatus() async {
+    fetchCalls++;
+    return result;
+  }
 }
 
 final class FakeBiometricsService implements BiometricsService {
