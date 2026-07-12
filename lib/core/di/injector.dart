@@ -50,6 +50,7 @@ Future<void> configureDependencies(
         config: sl(),
         storage: sl(),
         localeResolver: () => sl<LocaleCubit>().languageCode,
+        deviceInfo: sl<DeviceInfoService>().info,
       ),
       dispose: (manager) => manager.dispose(),
     )
@@ -57,6 +58,7 @@ Future<void> configureDependencies(
       () => .new(
         config: sl(),
         session: sl(),
+        deviceInfo: sl<DeviceInfoService>().info,
         localeResolver: () => sl<LocaleCubit>().languageCode,
       ),
     )

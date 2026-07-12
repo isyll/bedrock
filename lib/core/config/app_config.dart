@@ -30,10 +30,10 @@ enum AppFlavor { dev, prod }
 
 final class AuthEndpoints {
   const AuthEndpoints({
-    this.signIn = '/auth/login',
-    this.refresh = '/auth/refresh',
-    this.signOut = '/auth/logout',
-    this.profile = '/me',
+    this.signIn = '/v1/auth/login',
+    this.refresh = '/v1/auth/refresh',
+    this.signOut = '/v1/auth/logout',
+    this.profile = '/v1/me',
   });
 
   final String signIn;

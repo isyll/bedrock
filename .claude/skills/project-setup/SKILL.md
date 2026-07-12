@@ -10,7 +10,7 @@ Collect from the user before starting (ask if missing):
 1. App name (display name, e.g. "My App") and project name (snake_case, e.g. `my_app`)
 2. Organization / package prefix (e.g. `com.acme`)
 3. API base URLs for dev and prod
-4. Auth endpoint paths if they differ from the defaults (`/auth/login`, `/auth/refresh`, `/auth/logout`, `/me`)
+4. Auth endpoint paths if they differ from the defaults (`/v1/auth/login`, `/v1/auth/refresh`, `/v1/auth/logout`, `/v1/me`)
 5. Deep link hosts for dev and prod (or skip deep links)
 6. Whether Firebase/FCM is needed now
 

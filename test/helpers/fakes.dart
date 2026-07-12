@@ -1,15 +1,37 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
 import 'package:bedrock/services/biometrics/biometrics_service.dart';
+import 'package:bedrock/services/device/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:local_auth/local_auth.dart';
 
+const testDeviceInfo = DeviceInfo(
+  deviceId: 'test-device-id',
+  platform: 'android',
+  osVersion: '15',
+  model: 'Pixel 9',
+  manufacturer: 'Google',
+  appVersion: '1.2.3',
+  buildNumber: '42',
+);
+
+ResponseBody jsonResponseBody(Object? body, {int statusCode = 200}) =>
+    ResponseBody.fromString(
+      jsonEncode(body),
+      statusCode,
+      headers: {
+        Headers.contentTypeHeader: ['application/json'],
+      },
+    );
+
 DioException unauthorizedDioException() {
-  final options = RequestOptions(path: '/auth/login');
+  final options = RequestOptions(path: '/v1/auth/login');
   return .new(
     requestOptions: options,
     type: .badResponse,
@@ -109,6 +131,26 @@ final class InMemorySecureStorage implements SecureStorage {
 
   @override
   Future<void> write(String key, String value) async => values[key] = value;
+}
+
+final class ScriptedHttpAdapter implements HttpClientAdapter {
+  ScriptedHttpAdapter(this.handler);
+
+  final Future<ResponseBody> Function(RequestOptions options) handler;
+  int requestCount = 0;
+
+  @override
+  void close({bool force = false}) {}
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) {
+    requestCount++;
+    return handler(options);
+  }
 }
 
 final class ScriptedAuthApi implements AuthApi {

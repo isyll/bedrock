@@ -5,7 +5,7 @@ description: Bootstrap a new app from the Bedrock template by renaming the proje
 
 Bootstrap a new app from this Bedrock template.
 
-Collect from me before starting (ask if missing): app display name, project name (snake_case), organization package prefix (e.g. com.acme), dev and prod API base URLs, auth endpoint paths if they differ from the defaults (/auth/login, /auth/refresh, /auth/logout, /me), deep link hosts per flavor, and whether Firebase/FCM is needed now.
+Collect from me before starting (ask if missing): app display name, project name (snake_case), organization package prefix (e.g. com.acme), dev and prod API base URLs, auth endpoint paths if they differ from the defaults (/v1/auth/login, /v1/auth/refresh, /v1/auth/logout, /v1/me), deep link hosts per flavor, and whether Firebase/FCM is needed now.
 
 Then apply these steps:
 

@@ -10,7 +10,7 @@ Future<void> main() {
       appName: 'Bedrock Dev',
       apiBaseUrl: apiOverride.isNotEmpty
           ? apiOverride
-          : 'https://api.dev.example.com/v1',
+          : 'https://api.dev.example.com',
       deepLinkHost: 'app.dev.example.com',
       firebaseOptions: DevFirebaseOptions.currentPlatformOrNull,
       useFakeAuth: true,
