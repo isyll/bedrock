@@ -13,6 +13,7 @@ Collect from the user before starting (ask if missing):
 4. Auth endpoint paths if they differ from the defaults (`/v1/auth/login`, `/v1/auth/refresh`, `/v1/auth/logout`, `/v1/me`)
 5. Deep link hosts for dev and prod (or skip deep links)
 6. Whether Firebase/FCM is needed now
+7. The numeric App Store id, if the app already exists in App Store Connect (used for update and rating store links)
 
 ## Steps
 
@@ -25,7 +26,7 @@ Collect from the user before starting (ask if missing):
    - In `ios/Runner.xcodeproj/project.pbxproj`: update all `PRODUCT_BUNDLE_IDENTIFIER` values (dev configs get the `.dev` suffix), `APP_DISPLAY_NAME` values, and `DEEP_LINK_HOST` values.
    - In `ios/Runner/Info.plist`: update `CFBundleName` and the `CFBundleURLSchemes` custom scheme.
 4. Update app config:
-   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `deepLinkHost`, and `authEndpoints` (an `AuthEndpoints` instance) when the backend paths differ from the defaults.
+   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `deepLinkHost`, `appStoreId` (prod, when known), and `authEndpoints` (an `AuthEndpoints` instance) or `versionEndpoint` when the backend paths differ from the defaults.
    - `lib/core/config/app_config.dart`: default `deepLinkScheme`.
    - Android custom scheme in `android/app/src/main/AndroidManifest.xml` (`<data android:scheme=...>`).
    - iOS usage descriptions in `ios/Runner/Info.plist`: keep only the permissions the app requests and reword them for the product.

@@ -23,6 +23,10 @@ A `Makefile` wraps all of these (`make help`).
 - State management: `flutter_bloc` only. App-wide state lives in `SessionBloc` (auth session), `ThemeCubit`, and `LocaleCubit`, provided above `MaterialApp.router`. Screen state uses a `Bloc` or `Cubit` scoped to the page with `BlocProvider`.
 - Navigation: `go_router` in `lib/app/router/`. Auth guarding is done in the central `redirect`, refreshed through the `SessionBloc` stream. Deep links are handled natively by go_router (`FlutterDeepLinkingEnabled` on iOS, `autoVerify` intent filters on Android).
 - Networking: `dio` behind `ApiClientFactory` (`lib/core/network/`). Multiple clients are supported; each authenticated client gets an `AuthInterceptor` that checks token expiry before every request (refreshing proactively when stale) and falls back to a single-flight refresh-and-retry on 401. Token lifecycle is owned by `SessionManager` (`lib/core/session/`), which never touches UI or routing. Auth endpoint paths live in `AuthEndpoints` (`lib/core/config/app_config.dart`).
+- Client info: `DeviceInfoService` (`lib/services/device/`) loads app version, build number, and device details once at startup and owns the install id (UUID v4 persisted in secure storage). `ClientInfoInterceptor` stamps `X-App-Version`, `X-Build-Number`, `X-Platform`, `X-OS-Version`, and `X-Device-Id` on every request, and the device payload is sent in the sign in body so the backend stores it with the session.
+- App updates: `AppVersionApi` fetches `AppConfig.versionEndpoint` (`/v1/app/version`, returns `minimum_build` and `latest_build`); `AppUpdateCubit` (`lib/features/app_update/`) compares them to the current build. `AppUpdateGate` overlays a blocking update screen when required and shows a once-per-build dialog when available. Any HTTP 426 response forces the required state through `UpdateRequiredInterceptor`. Checks run at startup and on resume, throttled.
+- Store and reviews: `StoreService` (`lib/services/store/`) wraps `in_app_review` (native rating dialog, store listing). `AppReviewService` (`lib/services/review/`) throttles rating prompts by session count, days since first session, and days since last prompt.
+- Lifecycle: `AppLifecycleHandler` (`lib/app/`) owns the app-level `AppLifecycleListener`: update checks on resume, session counting and review prompts when the app returns to the foreground. `AppLockGate` keeps its own listener to lock on hide.
 - Errors: repositories return `Result<T>` (`lib/core/error/result.dart`), never throw across layers. `DioException` is mapped to a sealed `AppException` hierarchy via `mapDioException`. UI messages come from `AppExceptionMessage.localizedMessage`.
 - Logging: `AppLogger` (`lib/core/logging/`) fans `LogRecord`s out to `LogSink`s. `ConsoleLogSink` renders boxed, colored output in debug; `CrashlyticsLogSink` (`lib/services/crash/`) forwards breadcrumbs and non-fatal errors to Crashlytics in release builds when Firebase is configured.
 - Crash reporting: `CrashReporter` (`lib/services/crash/`) wraps Firebase Crashlytics. Fatal Flutter and platform errors are recorded from `bootstrap`, the session user id is attached, and collection is disabled in debug builds or when Firebase is absent.
@@ -43,10 +47,11 @@ lib/
   core/                            config, di, error, l10n (generated), logging,
                                    network, session, storage, extensions, utils
   features/<name>/                 data / domain / presentation per feature
-  services/                        crash reporting, location, media picking,
-                                   permissions, push notifications
+  services/                        crash reporting, device info, location,
+                                   media picking, permissions, push
+                                   notifications, review, store
   shared/                          animations toolkit and reusable UI widgets
-                                   (adaptive, buttons, feedback)
+                                   (adaptive, buttons, feedback, loaders)
 ```
 
 ## Conventions

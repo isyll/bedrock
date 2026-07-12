@@ -16,7 +16,7 @@ Start every mobile project on solid ground: flavors, opaque-token sessions, bloc
 </div>
 
 > [!TIP]
-> This repository is a template. Open it with Claude Code and run the `project-setup` skill, or use the `/project-setup` prompt with GitHub Copilot, to rename, rebrand, and configure a fresh project in minutes.
+> This repository is a template. Open it with Claude Code and run the `project-setup` skill, or use the `/project-setup` prompt with GitHub Copilot, to rename, rebrand, and configure a fresh project in minutes. The [customization guide](docs/CUSTOMIZATION.md) covers every knob in detail, including the backend contracts.
 
 ## What is inside
 
@@ -26,6 +26,9 @@ Start every mobile project on solid ground: flavors, opaque-token sessions, bloc
 | Navigation | `go_router` with a session-driven redirect guard and deep link support |
 | Networking | `dio` behind a multi-client factory, opaque token auth with proactive expiry checks and single-flight refresh |
 | Errors | Sealed `AppException` hierarchy and a hand-rolled `Result<T>`, no exceptions across layers |
+| Device identity | Install id (UUID v4 in secure storage) plus app and device metadata headers on every request, device payload stored with the backend session at sign in |
+| App updates | Backend-driven version gate: blocking screen below the minimum build, dismissible prompt below the latest, instant force update on HTTP 426 |
+| Ratings | Native in-app review prompts, throttled by session count, app age, and prompt interval |
 | DI | `get_it`, plain constructor injection |
 | Storage | `shared_preferences` (cached) for settings, hardened `flutter_secure_storage` for tokens |
 | Logging | Sink-based `AppLogger` with boxed, colored console output and Crashlytics forwarding |
@@ -89,14 +92,18 @@ lib/
 ├── core/                            config, di, error, l10n, logging,
 │                                    network, session, storage, extensions
 ├── features/
+│   ├── about/                       app name, version, licenses, rate app
+│   ├── app_update/                  version gate, update prompts
 │   ├── auth/                        sign in, session, token lifecycle
 │   ├── home/
+│   ├── security/                    biometric app lock
 │   └── settings/                    theme and language preferences
-├── services/                        crash reporting, location, media picking,
-│                                    permissions, push notifications
+├── services/                        crash reporting, device info, location,
+│                                    media picking, permissions, push
+│                                    notifications, review, store
 └── shared/                          animations toolkit and reusable UI
     ├── animations/                  AppMotion, FadeSlideIn, TapScale, Lottie
-    └── widgets/                     adaptive, buttons, feedback, error views
+    └── widgets/                     adaptive, buttons, feedback, loaders
 ```
 
 The session flow is the backbone: the backend issues an opaque access token with an `expires_at` timestamp, `AuthInterceptor` checks that expiry before every request and refreshes stale tokens once for all concurrent requests (with a 401 retry as fallback), `SessionManager` persists and rotates tokens, `SessionBloc` exposes the session to the UI, and the router redirects based on it. A refresh failure ends the session gracefully with a localized notice, never a crash.
@@ -104,7 +111,9 @@ The session flow is the backbone: the backend issues an opaque access token with
 ## Configuration checklist
 
 - [ ] Run the `project-setup` skill (or follow `.claude/skills/project-setup/SKILL.md` manually)
-- [ ] Set API base URLs in `lib/main_dev.dart` and `lib/main_prod.dart`, and auth endpoint paths via `AuthEndpoints` if they differ from the `/auth` defaults
+- [ ] Set API base URLs in `lib/main_dev.dart` and `lib/main_prod.dart`, and endpoint paths via `AuthEndpoints` if they differ from the `/v1` defaults
+- [ ] Implement the backend contracts (session device payload, `/v1/app/version`) described in [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md)
+- [ ] Set `appStoreId` in `lib/main_prod.dart` once the app exists in App Store Connect
 - [ ] `flutterfire configure` per flavor, paste into `lib/core/config/firebase/`, flip `configured` to `true`
 - [ ] Replace `assets/branding/` images, then `make icons splash`
 - [ ] Point deep link hosts at your domains (Gradle placeholders, iOS `DEEP_LINK_HOST`)
