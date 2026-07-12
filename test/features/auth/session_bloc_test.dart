@@ -29,6 +29,7 @@ void main() {
       api: api,
       session: session,
       storage: InMemoryKeyValueStorage(),
+      deviceInfoService: const FakeDeviceInfoService(),
     );
     await repository.signIn(email: 'demo@example.com', password: 'password1');
   });

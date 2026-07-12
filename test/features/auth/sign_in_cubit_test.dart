@@ -23,6 +23,7 @@ void main() {
       api: api,
       session: session,
       storage: InMemoryKeyValueStorage(),
+      deviceInfoService: const FakeDeviceInfoService(),
     );
   });
 

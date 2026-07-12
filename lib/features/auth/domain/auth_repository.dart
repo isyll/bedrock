@@ -9,6 +9,7 @@ import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
+import 'package:bedrock/services/device/device_info_service.dart';
 import 'package:dio/dio.dart';
 
 final class AuthRepository {
@@ -16,12 +17,14 @@ final class AuthRepository {
     required this._api,
     required this._session,
     required this._storage,
+    required this._deviceInfoService,
     this._logger = const .new('AuthRepository'),
   });
 
   final AuthApi _api;
   final SessionManager _session;
   final KeyValueStorage _storage;
+  final DeviceInfoService _deviceInfoService;
   final AppLogger _logger;
 
   User? _currentUser;
@@ -55,7 +58,11 @@ final class AuthRepository {
     required String password,
   }) async {
     try {
-      final result = await _api.signIn(email: email, password: password);
+      final result = await _api.signIn(
+        email: email,
+        password: password,
+        device: await _deviceInfoService.load(),
+      );
       _currentUser = result.user;
       await _cacheUser(result.user);
       await _session.start(result.tokens);

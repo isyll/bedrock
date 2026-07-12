@@ -33,6 +33,7 @@ void main() {
       api: api,
       session: session,
       storage: keyValueStorage,
+      deviceInfoService: const FakeDeviceInfoService(),
     );
   });
 
@@ -60,6 +61,14 @@ void main() {
     expect(keyValueStorage.getString(StorageKeys.currentUser), isNotNull);
   });
 
+  test('signIn passes the device info to the API', () async {
+    api.signInResult = successfulSignIn();
+
+    await repository.signIn(email: 'demo@example.com', password: 'password1');
+
+    expect(api.lastSignInDevice, testDeviceInfo);
+  });
+
   test('restore recovers the cached user from a previous run', () async {
     api.signInResult = successfulSignIn();
     await repository.signIn(email: 'demo@example.com', password: 'password1');
@@ -70,6 +79,7 @@ void main() {
       api: api,
       session: revived,
       storage: keyValueStorage,
+      deviceInfoService: const FakeDeviceInfoService(),
     );
     await restoredRepository.restore();
 

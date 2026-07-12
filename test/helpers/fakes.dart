@@ -8,6 +8,7 @@ import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
 import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:bedrock/services/device/device_info.dart';
+import 'package:bedrock/services/device/device_info_service.dart';
 import 'package:dio/dio.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -20,6 +21,18 @@ const testDeviceInfo = DeviceInfo(
   appVersion: '1.2.3',
   buildNumber: '42',
 );
+
+final class FakeDeviceInfoService implements DeviceInfoService {
+  const FakeDeviceInfoService([this.deviceInfo = testDeviceInfo]);
+
+  final DeviceInfo deviceInfo;
+
+  @override
+  DeviceInfo get info => deviceInfo;
+
+  @override
+  Future<DeviceInfo> load() async => deviceInfo;
+}
 
 ResponseBody jsonResponseBody(Object? body, {int statusCode = 200}) =>
     ResponseBody.fromString(
@@ -165,6 +178,7 @@ final class ScriptedAuthApi implements AuthApi {
   SignInResult? signInResult;
   Exception? signInError;
   User? profile;
+  DeviceInfo? lastSignInDevice;
   int signOutCalls = 0;
 
   @override
@@ -174,7 +188,9 @@ final class ScriptedAuthApi implements AuthApi {
   Future<SignInResult> signIn({
     required String email,
     required String password,
+    required DeviceInfo device,
   }) async {
+    lastSignInDevice = device;
     final error = signInError;
     if (error != null) throw error;
     return signInResult!;

@@ -72,7 +72,12 @@ Future<void> configureDependencies(
           : HttpAuthApi(client: sl(), config: sl()),
     )
     ..registerLazySingleton<AuthRepository>(
-      () => .new(api: sl(), session: sl(), storage: sl()),
+      () => .new(
+        api: sl(),
+        session: sl(),
+        storage: sl(),
+        deviceInfoService: sl(),
+      ),
     )
     ..registerLazySingleton<SessionBloc>(
       () => .new(authRepository: sl()),

@@ -3,6 +3,7 @@ import 'package:bedrock/core/network/api_client.dart';
 import 'package:bedrock/core/network/interceptors/auth_interceptor.dart';
 import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
+import 'package:bedrock/services/device/device_info.dart';
 
 abstract interface class AuthApi {
   Future<User> fetchProfile();
@@ -10,6 +11,7 @@ abstract interface class AuthApi {
   Future<SignInResult> signIn({
     required String email,
     required String password,
+    required DeviceInfo device,
   });
 
   Future<void> signOut();
@@ -34,6 +36,7 @@ final class FakeAuthApi implements AuthApi {
   Future<SignInResult> signIn({
     required String email,
     required String password,
+    required DeviceInfo device,
   }) async {
     await Future<void>.delayed(const .new(milliseconds: 600));
     return .new(
@@ -70,10 +73,15 @@ final class HttpAuthApi implements AuthApi {
   Future<SignInResult> signIn({
     required String email,
     required String password,
+    required DeviceInfo device,
   }) async {
     final response = await _client.dio.post<Map<String, dynamic>>(
       _config.authEndpoints.signIn,
-      data: {'email': email, 'password': password},
+      data: {
+        'email': email,
+        'password': password,
+        'device': device.toSessionPayload(),
+      },
       options: .new(extra: const {AuthInterceptor.skipAuthKey: true}),
     );
 
