@@ -12,6 +12,7 @@ import 'package:bedrock/features/settings/presentation/cubit/locale_cubit.dart';
 import 'package:bedrock/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:bedrock/services/crash/crash_reporter.dart';
+import 'package:bedrock/services/device/device_info_service.dart';
 import 'package:bedrock/services/location/location_service.dart';
 import 'package:bedrock/services/media/media_picker_service.dart';
 import 'package:bedrock/services/notifications/push_notifications_service.dart';
@@ -24,13 +25,19 @@ Future<void> configureDependencies(
   AppConfig config, {
   CrashReporter? crashReporter,
 }) async {
-  final keyValueStorage = await KeyValueStorage.create();
+  const secureStorage = SecureStorage();
+  final deviceInfoService = DeviceInfoService(storage: secureStorage);
+  final (keyValueStorage, _) = await (
+    KeyValueStorage.create(),
+    deviceInfoService.load(),
+  ).wait;
 
   sl
     ..registerSingleton<AppConfig>(config)
     ..registerSingleton<CrashReporter>(crashReporter ?? .new())
     ..registerSingleton<KeyValueStorage>(keyValueStorage)
-    ..registerSingleton<SecureStorage>(const .new())
+    ..registerSingleton<SecureStorage>(secureStorage)
+    ..registerSingleton<DeviceInfoService>(deviceInfoService)
     ..registerLazySingleton<ThemeCubit>(() => .new(storage: sl()))
     ..registerLazySingleton<LocaleCubit>(() => .new(storage: sl()))
     ..registerLazySingleton<BiometricsService>(BiometricsService.new)

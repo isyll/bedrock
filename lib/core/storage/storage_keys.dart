@@ -7,4 +7,5 @@ abstract final class StorageKeys {
   static const locale = 'settings.locale';
   static const biometricLock = 'security.biometric_lock';
   static const fcmToken = 'notifications.fcm_token';
+  static const installId = 'device.install_id';
 }
