@@ -11,6 +11,9 @@ final class AppUpdateState extends Equatable {
   final int latestBuild;
   final bool promptPending;
 
+  @override
+  List<Object> get props => [requirement, latestBuild, promptPending];
+
   bool get updateRequired => requirement == .required;
 
   AppUpdateState copyWith({
@@ -22,7 +25,4 @@ final class AppUpdateState extends Equatable {
     latestBuild: latestBuild ?? this.latestBuild,
     promptPending: promptPending ?? this.promptPending,
   );
-
-  @override
-  List<Object> get props => [requirement, latestBuild, promptPending];
 }

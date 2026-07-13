@@ -23,7 +23,7 @@ void main() {
     final session = SessionManager(
       config: config,
       storage: InMemorySecureStorage(),
-      tokenClient: Dio(),
+      tokenClient: .new(),
     );
     final factory = ApiClientFactory(
       config: config,

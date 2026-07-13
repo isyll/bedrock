@@ -8,20 +8,6 @@ abstract final class LoaderOverlay {
 
   static bool get isVisible => _entry != null;
 
-  static void show(BuildContext context, {String? message}) {
-    if (_entry != null) return;
-    final entry = OverlayEntry(
-      builder: (context) => _LoaderOverlayView(message: message),
-    );
-    _entry = entry;
-    Overlay.of(context, rootOverlay: true).insert(entry);
-  }
-
-  static void hide() {
-    _entry?.remove();
-    _entry = null;
-  }
-
   static Future<T> during<T>(
     BuildContext context,
     Future<T> operation, {
@@ -33,6 +19,20 @@ abstract final class LoaderOverlay {
     } finally {
       hide();
     }
+  }
+
+  static void hide() {
+    _entry?.remove();
+    _entry = null;
+  }
+
+  static void show(BuildContext context, {String? message}) {
+    if (_entry != null) return;
+    final entry = OverlayEntry(
+      builder: (context) => _LoaderOverlayView(message: message),
+    );
+    _entry = entry;
+    Overlay.of(context, rootOverlay: true).insert(entry);
   }
 }
 
@@ -46,7 +46,7 @@ class _LoaderOverlayView extends StatelessWidget {
     final message = this.message;
 
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
+      tween: .new(begin: 0, end: 1),
       duration: AppMotion.shortDuration,
       curve: AppMotion.decelerate,
       builder: (context, opacity, child) =>
@@ -60,11 +60,11 @@ class _LoaderOverlayView extends StatelessWidget {
           ),
           Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 280),
+              constraints: const .new(maxWidth: 280),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: context.colorScheme.surfaceContainerHigh,
-                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderRadius: const BorderRadius.all(.circular(16)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(24),

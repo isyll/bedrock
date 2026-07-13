@@ -26,20 +26,8 @@ const testDeviceInfo = DeviceInfo(
   buildNumber: '42',
 );
 
-final class FakeDeviceInfoService implements DeviceInfoService {
-  const FakeDeviceInfoService([this.deviceInfo = testDeviceInfo]);
-
-  final DeviceInfo deviceInfo;
-
-  @override
-  DeviceInfo get info => deviceInfo;
-
-  @override
-  Future<DeviceInfo> load() async => deviceInfo;
-}
-
 ResponseBody jsonResponseBody(Object? body, {int statusCode = 200}) =>
-    ResponseBody.fromString(
+    .fromString(
       jsonEncode(body),
       statusCode,
       headers: {
@@ -58,34 +46,6 @@ DioException unauthorizedDioException() {
       data: {'message': 'Invalid credentials'},
     ),
   );
-}
-
-final class FakeStoreService implements StoreService {
-  int openListingCalls = 0;
-  int requestReviewCalls = 0;
-  bool reviewAvailable = true;
-
-  @override
-  Future<void> openListing() async => openListingCalls++;
-
-  @override
-  Future<bool> requestReview() async {
-    requestReviewCalls++;
-    return reviewAvailable;
-  }
-}
-
-final class ScriptedVersionApi implements AppVersionApi {
-  ScriptedVersionApi(this.result);
-
-  Result<AppVersionStatus> result;
-  int fetchCalls = 0;
-
-  @override
-  Future<Result<AppVersionStatus>> fetchStatus() async {
-    fetchCalls++;
-    return result;
-  }
 }
 
 final class FakeBiometricsService implements BiometricsService {
@@ -110,6 +70,33 @@ final class FakeBiometricsService implements BiometricsService {
 
   @override
   Future<bool> isSupported() async => supported;
+}
+
+final class FakeDeviceInfoService implements DeviceInfoService {
+  const FakeDeviceInfoService([this.deviceInfo = testDeviceInfo]);
+
+  final DeviceInfo deviceInfo;
+
+  @override
+  DeviceInfo get info => deviceInfo;
+
+  @override
+  Future<DeviceInfo> load() async => deviceInfo;
+}
+
+final class FakeStoreService implements StoreService {
+  int openListingCalls = 0;
+  int requestReviewCalls = 0;
+  bool reviewAvailable = true;
+
+  @override
+  Future<void> openListing() async => openListingCalls++;
+
+  @override
+  Future<bool> requestReview() async {
+    requestReviewCalls++;
+    return reviewAvailable;
+  }
 }
 
 final class InMemoryKeyValueStorage implements KeyValueStorage {
@@ -178,26 +165,6 @@ final class InMemorySecureStorage implements SecureStorage {
   Future<void> write(String key, String value) async => values[key] = value;
 }
 
-final class ScriptedHttpAdapter implements HttpClientAdapter {
-  ScriptedHttpAdapter(this.handler);
-
-  final Future<ResponseBody> Function(RequestOptions options) handler;
-  int requestCount = 0;
-
-  @override
-  void close({bool force = false}) {}
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) {
-    requestCount++;
-    return handler(options);
-  }
-}
-
 final class ScriptedAuthApi implements AuthApi {
   ScriptedAuthApi({this.signInResult, this.signInError, this.profile});
 
@@ -230,4 +197,37 @@ final class ScriptedAuthApi implements AuthApi {
 
   @override
   Future<void> signOut() async => signOutCalls++;
+}
+
+final class ScriptedHttpAdapter implements HttpClientAdapter {
+  ScriptedHttpAdapter(this.handler);
+
+  final Future<ResponseBody> Function(RequestOptions options) handler;
+  int requestCount = 0;
+
+  @override
+  void close({bool force = false}) {}
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) {
+    requestCount++;
+    return handler(options);
+  }
+}
+
+final class ScriptedVersionApi implements AppVersionApi {
+  ScriptedVersionApi(this.result);
+
+  Result<AppVersionStatus> result;
+  int fetchCalls = 0;
+
+  @override
+  Future<Result<AppVersionStatus>> fetchStatus() async {
+    fetchCalls++;
+    return result;
+  }
 }

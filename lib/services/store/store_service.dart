@@ -7,7 +7,7 @@ class StoreService {
     required this._config,
     InAppReview? inAppReview,
     this._logger = const .new('StoreService'),
-  }) : _inAppReview = inAppReview ?? InAppReview.instance;
+  }) : _inAppReview = inAppReview ?? .instance;
 
   final AppConfig _config;
   final InAppReview _inAppReview;

@@ -36,7 +36,7 @@ void main() {
         tester.element(find.text('content')),
         message: 'Please wait',
       );
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
 
       expect(LoaderOverlay.isVisible, isTrue);
       expect(find.byType(ModalBarrier), findsWidgets);
@@ -44,7 +44,7 @@ void main() {
       expect(find.text('Please wait'), findsOneWidget);
 
       LoaderOverlay.hide();
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
 
       expect(LoaderOverlay.isVisible, isFalse);
       expect(find.byType(AdaptiveProgressIndicator), findsNothing);
@@ -56,7 +56,7 @@ void main() {
 
       LoaderOverlay.show(context);
       LoaderOverlay.show(context);
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
 
       expect(find.byType(AdaptiveProgressIndicator), findsOneWidget);
     });
@@ -71,12 +71,12 @@ void main() {
         tester.element(find.text('content')),
         completer.future,
       );
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
       expect(LoaderOverlay.isVisible, isTrue);
 
       completer.complete(7);
       expect(await result, 7);
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
       expect(LoaderOverlay.isVisible, isFalse);
     });
 
@@ -92,7 +92,7 @@ void main() {
         ),
         throwsException,
       );
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const .new(milliseconds: 200));
 
       expect(LoaderOverlay.isVisible, isFalse);
     });

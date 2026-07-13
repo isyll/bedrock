@@ -12,7 +12,7 @@ void main() {
   setUp(() {
     storage = .new();
     store = .new();
-    now = DateTime.utc(2026, 7, 12);
+    now = .utc(2026, 7, 12);
   });
 
   AppReviewService buildService() => .new(
@@ -42,7 +42,7 @@ void main() {
   test('does not prompt before enough sessions', () async {
     final service = buildService();
     await recordSessions(service, 4);
-    now = now.add(const Duration(days: 10));
+    now = now.add(const .new(days: 10));
 
     await service.maybeRequestReview();
 
@@ -52,7 +52,7 @@ void main() {
   test('does not prompt before the minimum usage period', () async {
     final service = buildService();
     await recordSessions(service, 5);
-    now = now.add(const Duration(days: 2));
+    now = now.add(const .new(days: 2));
 
     await service.maybeRequestReview();
 
@@ -62,7 +62,7 @@ void main() {
   test('prompts once conditions are met and records the prompt', () async {
     final service = buildService();
     await recordSessions(service, 5);
-    now = now.add(const Duration(days: 4));
+    now = now.add(const .new(days: 4));
 
     await service.maybeRequestReview();
 
@@ -76,14 +76,14 @@ void main() {
   test('waits for the interval before prompting again', () async {
     final service = buildService();
     await recordSessions(service, 5);
-    now = now.add(const Duration(days: 4));
+    now = now.add(const .new(days: 4));
     await service.maybeRequestReview();
 
-    now = now.add(const Duration(days: 30));
+    now = now.add(const .new(days: 30));
     await service.maybeRequestReview();
     expect(store.requestReviewCalls, 1);
 
-    now = now.add(const Duration(days: 61));
+    now = now.add(const .new(days: 61));
     await service.maybeRequestReview();
     expect(store.requestReviewCalls, 2);
   });
@@ -92,7 +92,7 @@ void main() {
     store.reviewAvailable = false;
     final service = buildService();
     await recordSessions(service, 5);
-    now = now.add(const Duration(days: 4));
+    now = now.add(const .new(days: 4));
 
     await service.maybeRequestReview();
 

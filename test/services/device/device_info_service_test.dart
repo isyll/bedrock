@@ -1,7 +1,6 @@
 import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:bedrock/services/device/device_info_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../helpers/fakes.dart';
 
@@ -10,22 +9,21 @@ void main() {
     r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
   );
 
-  DeviceInfoService buildService(InMemorySecureStorage storage) =>
-      DeviceInfoService(
-        storage: storage,
-        platformDetailsLoader: () async => (
-          platform: 'android',
-          osVersion: '15',
-          model: 'Pixel 9',
-          manufacturer: 'Google',
-        ),
-        packageInfoLoader: () async => PackageInfo(
-          appName: 'Bedrock',
-          packageName: 'com.example.bedrock',
-          version: '1.2.3',
-          buildNumber: '42',
-        ),
-      );
+  DeviceInfoService buildService(InMemorySecureStorage storage) => .new(
+    storage: storage,
+    platformDetailsLoader: () async => (
+      platform: 'android',
+      osVersion: '15',
+      model: 'Pixel 9',
+      manufacturer: 'Google',
+    ),
+    packageInfoLoader: () async => .new(
+      appName: 'Bedrock',
+      packageName: 'com.example.bedrock',
+      version: '1.2.3',
+      buildNumber: '42',
+    ),
+  );
 
   group('DeviceInfoService', () {
     test('generates a v4 install id and persists it', () async {
@@ -58,13 +56,13 @@ void main() {
     });
 
     test('throws when info is read before load', () {
-      final service = buildService(InMemorySecureStorage());
+      final service = buildService(.new());
 
       expect(() => service.info, throwsStateError);
     });
 
     test('builds the session payload from device and app details', () async {
-      final info = await buildService(InMemorySecureStorage()).load();
+      final info = await buildService(.new()).load();
 
       expect(info.toSessionPayload(), {
         'device_id': info.deviceId,
@@ -81,7 +79,7 @@ void main() {
       final service = DeviceInfoService(
         storage: InMemorySecureStorage(),
         platformDetailsLoader: () async => throw Exception('unavailable'),
-        packageInfoLoader: () async => PackageInfo(
+        packageInfoLoader: () async => .new(
           appName: 'Bedrock',
           packageName: 'com.example.bedrock',
           version: '1.2.3',

@@ -26,9 +26,10 @@ void main() {
   group('AppVersionStatus.requirementFor', () {
     const status = AppVersionStatus(minimumBuild: 10, latestBuild: 20);
 
-    test('requires an update below the minimum build', () {
-      expect(status.requirementFor(9), UpdateRequirement.required);
-    });
+    test(
+      'requires an update below the minimum build',
+      () => expect(status.requirementFor(9), UpdateRequirement.required),
+    );
 
     test('offers an update between minimum and latest', () {
       expect(status.requirementFor(10), UpdateRequirement.available);

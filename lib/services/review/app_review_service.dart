@@ -45,7 +45,7 @@ class AppReviewService {
 
   DateTime? _readDate(String key) {
     final raw = _storage.getString(key);
-    return raw == null ? null : DateTime.tryParse(raw);
+    return raw == null ? null : .tryParse(raw);
   }
 
   bool _shouldPrompt() {

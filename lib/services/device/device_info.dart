@@ -17,7 +17,7 @@ final class DeviceInfo {
   final String appVersion;
   final String buildNumber;
 
-  int get buildNumberValue => int.tryParse(buildNumber) ?? 0;
+  int get buildNumberValue => .tryParse(buildNumber) ?? 0;
 
   String get fullVersion => '$appVersion ($buildNumber)';
 

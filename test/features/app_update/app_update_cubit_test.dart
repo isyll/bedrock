@@ -16,11 +16,11 @@ void main() {
 
   setUp(() {
     api = .new(
-      const Result.success(.new(minimumBuild: 0, latestBuild: 0)),
+      const .success(.new(minimumBuild: 0, latestBuild: 0)),
     );
     storage = .new();
     store = .new();
-    now = DateTime.utc(2026, 7, 12);
+    now = .utc(2026, 7, 12);
   });
 
   AppUpdateCubit buildCubit() => .new(
@@ -34,7 +34,7 @@ void main() {
   Result<AppVersionStatus> status({
     required int minimum,
     required int latest,
-  }) => Result.success(.new(minimumBuild: minimum, latestBuild: latest));
+  }) => .success(.new(minimumBuild: minimum, latestBuild: latest));
 
   group('check', () {
     blocTest<AppUpdateCubit, AppUpdateState>(
@@ -42,8 +42,8 @@ void main() {
       build: buildCubit,
       setUp: () => api.result = status(minimum: 50, latest: 60),
       act: (cubit) => cubit.check(),
-      expect: () => const [
-        AppUpdateState(requirement: .required, latestBuild: 60),
+      expect: () => const <AppUpdateState>[
+        .new(requirement: .required, latestBuild: 60),
       ],
     );
 
@@ -52,8 +52,8 @@ void main() {
       build: buildCubit,
       setUp: () => api.result = status(minimum: 10, latest: 50),
       act: (cubit) => cubit.check(),
-      expect: () => const [
-        AppUpdateState(
+      expect: () => const <AppUpdateState>[
+        .new(
           requirement: .available,
           latestBuild: 50,
           promptPending: true,
@@ -69,8 +69,8 @@ void main() {
         storage.values[StorageKeys.dismissedUpdateBuild] = 50;
       },
       act: (cubit) => cubit.check(),
-      expect: () => const [
-        AppUpdateState(requirement: .available, latestBuild: 50),
+      expect: () => const <AppUpdateState>[
+        .new(requirement: .available, latestBuild: 50),
       ],
     );
 
@@ -79,15 +79,15 @@ void main() {
       build: buildCubit,
       setUp: () => api.result = status(minimum: 10, latest: 42),
       act: (cubit) => cubit.check(),
-      expect: () => const [
-        AppUpdateState(latestBuild: 42),
+      expect: () => const <AppUpdateState>[
+        .new(latestBuild: 42),
       ],
     );
 
     blocTest<AppUpdateCubit, AppUpdateState>(
       'keeps state unchanged when the version check fails',
       build: buildCubit,
-      setUp: () => api.result = const Result.failure(
+      setUp: () => api.result = const .failure(
         NetworkException('offline', kind: .offline),
       ),
       act: (cubit) => cubit.check(),
@@ -103,7 +103,7 @@ void main() {
       await cubit.check();
       expect(api.fetchCalls, 1);
 
-      now = now.add(const Duration(hours: 7));
+      now = now.add(const .new(hours: 7));
       await cubit.check();
       expect(api.fetchCalls, 2);
     });
@@ -125,8 +125,8 @@ void main() {
     act: (cubit) => cubit
       ..notifyUpdateRequired()
       ..notifyUpdateRequired(),
-    expect: () => const [
-      AppUpdateState(requirement: .required),
+    expect: () => const <AppUpdateState>[
+      .new(requirement: .required),
     ],
   );
 

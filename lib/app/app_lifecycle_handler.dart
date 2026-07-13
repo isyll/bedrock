@@ -37,9 +37,7 @@ class _AppLifecycleHandlerState extends State<AppLifecycleHandler> {
     unawaited(sl<AppReviewService>().recordSession());
   }
 
-  void _onResume() {
-    unawaited(context.read<AppUpdateCubit>().check());
-  }
+  void _onResume() => unawaited(context.read<AppUpdateCubit>().check());
 
   void _onShow() {
     final review = sl<AppReviewService>();

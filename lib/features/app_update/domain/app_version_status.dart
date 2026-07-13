@@ -1,5 +1,3 @@
-enum UpdateRequirement { none, available, required }
-
 final class AppVersionStatus {
   const AppVersionStatus({
     required this.minimumBuild,
@@ -22,7 +20,9 @@ final class AppVersionStatus {
 
   static int _readBuild(Object? value) => switch (value) {
     final int number => number,
-    final String text => int.tryParse(text) ?? 0,
+    final String text => .tryParse(text) ?? 0,
     _ => 0,
   };
 }
+
+enum UpdateRequirement { none, available, required }
