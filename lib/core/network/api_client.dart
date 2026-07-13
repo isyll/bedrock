@@ -6,7 +6,6 @@ import 'package:bedrock/core/network/interceptors/auth_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/client_info_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/logging_interceptor.dart';
-import 'package:bedrock/core/network/interceptors/update_required_interceptor.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:bedrock/services/device/device_info.dart';
 import 'package:dio/dio.dart';
@@ -44,14 +43,12 @@ final class ApiClientFactory {
     required this._session,
     required this._deviceInfo,
     this._localeResolver,
-    this._onUpdateRequired,
   });
 
   final AppConfig _config;
   final SessionManager _session;
   final DeviceInfo _deviceInfo;
   final LocaleResolver? _localeResolver;
-  final void Function()? _onUpdateRequired;
 
   ApiClient backend() => create(baseUrl: _config.apiBaseUrl);
 
@@ -77,12 +74,9 @@ final class ApiClientFactory {
       );
     }
 
-    final onUpdateRequired = _onUpdateRequired;
     dio.interceptors.addAll([
       ClientInfoInterceptor(info: _deviceInfo),
       LocaleInterceptor(resolver: _localeResolver),
-      if (onUpdateRequired != null)
-        UpdateRequiredInterceptor(onUpdateRequired: onUpdateRequired),
       ...interceptors,
       if (kDebugMode) const LoggingInterceptor(),
     ]);

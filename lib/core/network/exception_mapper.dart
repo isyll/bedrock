@@ -78,8 +78,6 @@ AppException _mapResponse(DioException error) {
 
   if (statusCode == 401) return UnauthorizedException(message, code: code);
 
-  if (statusCode == 426) return UpgradeRequiredException(message, code: code);
-
   if (statusCode == 422 || statusCode == 400) {
     final fieldErrors = _extractFieldErrors(body);
     if (fieldErrors.isNotEmpty) {

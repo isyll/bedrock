@@ -48,7 +48,6 @@ Endpoint paths carry their own version prefix and live in `AuthEndpoints` (`lib/
 | Token refresh | `/v1/auth/refresh` |
 | Sign out | `/v1/auth/logout` |
 | Profile | `/v1/me` |
-| Version status | `/v1/app/version` (`versionEndpoint` on `AppConfig`) |
 
 Override any of them per flavor:
 
@@ -97,32 +96,24 @@ AppConfig(
 }
 ```
 
-### Version status
+### App updates
 
-`GET /v1/app/version` is called unauthenticated on launch and on each resume (throttled to once per 6 hours). Use the `X-Platform` header to answer per platform:
+App updates are handled entirely by the platform stores and need nothing from your backend.
 
-```json
-{
-  "minimum_build": 50,
-  "latest_build": 58
-}
-```
+- **Android:** `AppUpdateService` runs [Google Play in-app updates](https://developer.android.com/guide/playcore/in-app-updates) through the `in_app_update` package. On launch and on resume (throttled to once per 6 hours) it asks Play whether an update is available and, when one is, starts the flexible flow (falling back to immediate). Play renders the prompt and the download UI itself. This only triggers for builds installed from Play (the store or an internal testing track), never for debug or sideloaded builds.
+- **iOS:** there is no native in-app update API, so `AppUpdateService` queries Apple's public App Store lookup endpoint (`https://itunes.apple.com/lookup?bundleId=...`) for the published version and compares it with the installed one. When the store is ahead, `AppUpdateGate` shows a dismissible dialog once per version and remembers the version the user dismissed.
 
 ```mermaid
 flowchart LR
-    A[App launch or resume] --> B{"GET /v1/app/version"}
-    B -->|build < minimum_build| C[Blocking update screen]
-    B -->|build < latest_build| D[Dismissible update dialog<br/>once per new build]
-    B -->|up to date or request failed| E[Nothing]
-    F[Any API response with 426] --> C
-    C -->|Update button| G[Store listing]
-    D -->|Update button| G
+    A[App launch or resume] --> B{Platform}
+    B -->|Android| C[Google Play in-app update]
+    B -->|iOS| D{App Store lookup}
+    D -->|store version newer| E[Dismissible dialog<br/>once per version]
+    D -->|up to date or request failed| F[Nothing]
+    E -->|Update button| G[Store listing]
 ```
 
-> [!IMPORTANT]
-> The reactive path is what makes breaking backend changes safe: when you ship an incompatible API change, bump `minimum_build` **and** answer old clients with HTTP `426 Upgrade Required`. Clients switch to the blocking update screen instantly, even mid-session, without waiting for the next poll.
-
-Both store buttons open the platform listing through `StoreService`. On iOS this requires `appStoreId` (the numeric id from App Store Connect) on `AppConfig`; Android needs nothing.
+Opening the listing on iOS needs `appStoreId` (the numeric id from App Store Connect) on `AppConfig`; Android needs nothing.
 
 ## 4. Deep links
 
@@ -226,4 +217,4 @@ Sessions are counted by `AppLifecycleHandler` (cold start plus each return to th
 - [ ] Create a keystore and `android/key.properties` (gitignored)
 - [ ] Pin your API certificates in `android/app/src/main/res/xml/network_security_config.xml`
 - [ ] Keep `build/symbols` from `make apk` / `make aab` / `make ipa` to deobfuscate Crashlytics traces
-- [ ] Verify the update flow end to end: set `minimum_build` above the installed build and confirm the blocking screen appears
+- [ ] Verify the update flow end to end: on Android push a higher build to an internal testing track and confirm Play prompts to update; on iOS confirm the dialog appears once the App Store version is ahead of the installed one

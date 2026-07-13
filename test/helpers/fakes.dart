@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bedrock/core/error/result.dart';
 import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
-import 'package:bedrock/features/app_update/data/app_version_api.dart';
-import 'package:bedrock/features/app_update/domain/app_version_status.dart';
+import 'package:bedrock/features/app_update/data/app_update_service.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/user.dart';
 import 'package:bedrock/services/biometrics/biometrics_service.dart';
@@ -18,10 +16,22 @@ import 'package:local_auth/local_auth.dart';
 
 const testDeviceInfo = DeviceInfo(
   deviceId: 'test-device-id',
+  bundleId: 'com.example.bedrock',
   platform: 'android',
   osVersion: '15',
   model: 'Pixel 9',
   manufacturer: 'Google',
+  appVersion: '1.2.3',
+  buildNumber: '42',
+);
+
+const iosDeviceInfo = DeviceInfo(
+  deviceId: 'test-device-id',
+  bundleId: 'com.example.bedrock',
+  platform: 'ios',
+  osVersion: '17.5',
+  model: 'iPhone16,1',
+  manufacturer: 'Apple',
   appVersion: '1.2.3',
   buildNumber: '42',
 );
@@ -219,15 +229,15 @@ final class ScriptedHttpAdapter implements HttpClientAdapter {
   }
 }
 
-final class ScriptedVersionApi implements AppVersionApi {
-  ScriptedVersionApi(this.result);
+final class FakeAppUpdateService implements AppUpdateService {
+  FakeAppUpdateService([this.storeVersion]);
 
-  Result<AppVersionStatus> result;
-  int fetchCalls = 0;
+  String? storeVersion;
+  int checkCalls = 0;
 
   @override
-  Future<Result<AppVersionStatus>> fetchStatus() async {
-    fetchCalls++;
-    return result;
+  Future<String?> check() async {
+    checkCalls++;
+    return storeVersion;
   }
 }

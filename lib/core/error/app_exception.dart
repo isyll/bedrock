@@ -58,11 +58,6 @@ final class UnexpectedException extends AppException {
   final StackTrace? stackTrace;
 }
 
-final class UpgradeRequiredException extends ApiException {
-  const UpgradeRequiredException(super.message, {super.code})
-    : super(statusCode: 426);
-}
-
 final class ValidationException extends ApiException {
   const ValidationException(
     super.message, {

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bedrock/app/router/app_router.dart';
 import 'package:bedrock/core/extensions/context_extensions.dart';
 import 'package:bedrock/features/app_update/presentation/cubit/app_update_cubit.dart';
-import 'package:bedrock/features/app_update/presentation/pages/update_required_screen.dart';
 import 'package:bedrock/shared/widgets/adaptive/adaptive_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,17 +14,11 @@ class AppUpdateGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AppUpdateCubit, AppUpdateState>(
+    return BlocListener<AppUpdateCubit, AppUpdateState>(
       listenWhen: (previous, current) =>
-          current.promptPending && !previous.promptPending,
+          current.updateAvailable && !previous.updateAvailable,
       listener: (context, state) => unawaited(_promptForUpdate(context)),
-      builder: (context, state) => Stack(
-        fit: .expand,
-        children: [
-          child,
-          if (state.updateRequired) const UpdateRequiredScreen(),
-        ],
-      ),
+      child: child,
     );
   }
 
@@ -43,7 +36,7 @@ class AppUpdateGate extends StatelessWidget {
       cancelLabel: l10n.updateLaterButton,
     );
 
-    await cubit.dismissPrompt();
+    await cubit.dismiss();
     if (accepted) await cubit.openStore();
   }
 }

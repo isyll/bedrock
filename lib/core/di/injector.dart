@@ -4,7 +4,7 @@ import 'package:bedrock/core/network/api_client.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:bedrock/core/storage/key_value_storage.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
-import 'package:bedrock/features/app_update/data/app_version_api.dart';
+import 'package:bedrock/features/app_update/data/app_update_service.dart';
 import 'package:bedrock/features/app_update/presentation/cubit/app_update_cubit.dart';
 import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
@@ -64,7 +64,6 @@ Future<void> configureDependencies(
         session: sl(),
         deviceInfo: sl<DeviceInfoService>().info,
         localeResolver: () => sl<LocaleCubit>().languageCode,
-        onUpdateRequired: () => sl<AppUpdateCubit>().notifyUpdateRequired(),
       ),
     )
     ..registerLazySingleton<ApiClient>(
@@ -75,13 +74,18 @@ Future<void> configureDependencies(
     ..registerLazySingleton<AppReviewService>(
       () => .new(storage: sl(), store: sl()),
     )
-    ..registerLazySingleton<AppVersionApi>(
-      () => .new(client: sl(), config: sl()),
+    ..registerLazySingleton<AppUpdateService>(
+      () => .new(
+        deviceInfo: sl<DeviceInfoService>().info,
+        storeClient: sl<ApiClientFactory>().create(
+          baseUrl: AppUpdateService.appStoreLookupBaseUrl,
+          authenticated: false,
+        ),
+      ),
     )
     ..registerLazySingleton<AppUpdateCubit>(
       () => .new(
-        api: sl(),
-        deviceInfo: sl<DeviceInfoService>().info,
+        service: sl(),
         storage: sl(),
         store: sl(),
       ),

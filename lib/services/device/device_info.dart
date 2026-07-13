@@ -1,6 +1,7 @@
 final class DeviceInfo {
   const DeviceInfo({
     required this.deviceId,
+    required this.bundleId,
     required this.platform,
     required this.osVersion,
     required this.model,
@@ -10,6 +11,7 @@ final class DeviceInfo {
   });
 
   final String deviceId;
+  final String bundleId;
   final String platform;
   final String osVersion;
   final String model;

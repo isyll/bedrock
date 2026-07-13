@@ -51,6 +51,7 @@ class DeviceInfoService {
 
     final info = DeviceInfo(
       deviceId: deviceId,
+      bundleId: package.packageName,
       platform: details.platform,
       osVersion: details.osVersion,
       model: details.model,

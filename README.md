@@ -27,7 +27,7 @@ Start every mobile project on solid ground: flavors, opaque-token sessions, bloc
 | Networking | `dio` behind a multi-client factory, opaque token auth with proactive expiry checks and single-flight refresh |
 | Errors | Sealed `AppException` hierarchy and a hand-rolled `Result<T>`, no exceptions across layers |
 | Device identity | Install id (UUID v4 in secure storage) plus app and device metadata headers on every request, device payload stored with the backend session at sign in |
-| App updates | Backend-driven version gate: blocking screen below the minimum build, dismissible prompt below the latest, instant force update on HTTP 426 |
+| App updates | Platform-native, no backend: Google Play in-app updates on Android, App Store version check with a dismissible prompt on iOS |
 | Ratings | Native in-app review prompts, throttled by session count, app age, and prompt interval |
 | DI | `get_it`, plain constructor injection |
 | Storage | `shared_preferences` (cached) for settings, hardened `flutter_secure_storage` for tokens |
@@ -93,7 +93,7 @@ lib/
 │                                    network, session, storage, extensions
 ├── features/
 │   ├── about/                       app name, version, licenses, rate app
-│   ├── app_update/                  version gate, update prompts
+│   ├── app_update/                  native in-app updates (Play and App Store)
 │   ├── auth/                        sign in, session, token lifecycle
 │   ├── home/
 │   ├── security/                    biometric app lock
@@ -112,8 +112,8 @@ The session flow is the backbone: the backend issues an opaque access token with
 
 - [ ] Run the `project-setup` skill (or follow `.claude/skills/project-setup/SKILL.md` manually)
 - [ ] Set API base URLs in `lib/main_dev.dart` and `lib/main_prod.dart`, and endpoint paths via `AuthEndpoints` if they differ from the `/v1` defaults
-- [ ] Implement the backend contracts (session device payload, `/v1/app/version`) described in [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md)
-- [ ] Set `appStoreId` in `lib/main_prod.dart` once the app exists in App Store Connect
+- [ ] Implement the backend contract (session device payload) described in [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md)
+- [ ] Set `appStoreId` in `lib/main_prod.dart` once the app exists in App Store Connect (required for the iOS update and review prompts)
 - [ ] `flutterfire configure` per flavor, paste into `lib/core/config/firebase/`, flip `configured` to `true`
 - [ ] Replace `assets/branding/` images, then `make icons splash`
 - [ ] Point deep link hosts at your domains (Gradle placeholders, iOS `DEEP_LINK_HOST`)

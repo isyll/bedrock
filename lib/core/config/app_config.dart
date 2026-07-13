@@ -6,7 +6,6 @@ final class AppConfig {
     required this.appName,
     required this.apiBaseUrl,
     this.authEndpoints = const .new(),
-    this.versionEndpoint = '/v1/app/version',
     this.appStoreId = '',
     this.firebaseOptions,
     this.deepLinkScheme = 'bedrock',
@@ -18,7 +17,6 @@ final class AppConfig {
   final String appName;
   final String apiBaseUrl;
   final AuthEndpoints authEndpoints;
-  final String versionEndpoint;
   final String appStoreId;
   final FirebaseOptions? firebaseOptions;
   final String deepLinkScheme;

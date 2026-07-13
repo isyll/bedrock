@@ -8,7 +8,7 @@ abstract final class StorageKeys {
   static const biometricLock = 'security.biometric_lock';
   static const fcmToken = 'notifications.fcm_token';
   static const installId = 'device.install_id';
-  static const dismissedUpdateBuild = 'update.dismissed_build';
+  static const dismissedUpdateVersion = 'update.dismissed_version';
   static const reviewSessionCount = 'review.session_count';
   static const reviewFirstSessionAt = 'review.first_session_at';
   static const reviewLastPromptAt = 'review.last_prompt_at';
