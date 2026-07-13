@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
@@ -7,6 +6,7 @@ import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:bedrock/services/device/device_info.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:uuid/uuid.dart';
 
 typedef PlatformDetails = ({
   String platform,
@@ -66,7 +66,7 @@ class DeviceInfoService {
     final existing = await _storage.read(StorageKeys.installId);
     if (existing != null && existing.isNotEmpty) return existing;
 
-    final id = _generateUuidV4();
+    final id = const Uuid().v4();
     await _storage.write(StorageKeys.installId, id);
     return id;
   }
@@ -83,19 +83,6 @@ class DeviceInfoService {
         manufacturer: 'unknown',
       );
     }
-  }
-
-  static String _generateUuidV4() {
-    final random = Random.secure();
-    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
-    bytes[6] = (bytes[6] & 0x0f) | 0x40;
-    bytes[8] = (bytes[8] & 0x3f) | 0x80;
-    final hex = bytes
-        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-        .join();
-    return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
-        '${hex.substring(12, 16)}-${hex.substring(16, 20)}-'
-        '${hex.substring(20)}';
   }
 
   static Future<PlatformDetails> _loadPlatformDetails() async {
