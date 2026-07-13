@@ -9,9 +9,10 @@ void main() {
       expect(isVersionNewer('1.2.4', '1.2.3'), isTrue);
     });
 
-    test('treats an equal version as not newer', () {
-      expect(isVersionNewer('1.2.3', '1.2.3'), isFalse);
-    });
+    test(
+      'treats an equal version as not newer',
+      () => expect(isVersionNewer('1.2.3', '1.2.3'), isFalse),
+    );
 
     test('compares segments numerically, not lexically', () {
       expect(isVersionNewer('1.10.0', '1.9.0'), isTrue);

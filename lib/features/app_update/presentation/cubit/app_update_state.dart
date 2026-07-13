@@ -5,8 +5,8 @@ final class AppUpdateState extends Equatable {
 
   final String? availableVersion;
 
-  bool get updateAvailable => availableVersion != null;
-
   @override
   List<Object?> get props => [availableVersion];
+
+  bool get updateAvailable => availableVersion != null;
 }

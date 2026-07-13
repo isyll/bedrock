@@ -13,7 +13,7 @@ void main() {
   }) {
     final dio =
         Dio(
-            BaseOptions(baseUrl: AppUpdateService.appStoreLookupBaseUrl),
+            .new(baseUrl: AppUpdateService.appStoreLookupBaseUrl),
           )
           ..httpClientAdapter = ScriptedHttpAdapter(
             handler ?? (_) async => jsonResponseBody(const {}),

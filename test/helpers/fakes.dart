@@ -14,17 +14,6 @@ import 'package:bedrock/services/store/store_service.dart';
 import 'package:dio/dio.dart';
 import 'package:local_auth/local_auth.dart';
 
-const testDeviceInfo = DeviceInfo(
-  deviceId: 'test-device-id',
-  bundleId: 'com.example.bedrock',
-  platform: 'android',
-  osVersion: '15',
-  model: 'Pixel 9',
-  manufacturer: 'Google',
-  appVersion: '1.2.3',
-  buildNumber: '42',
-);
-
 const iosDeviceInfo = DeviceInfo(
   deviceId: 'test-device-id',
   bundleId: 'com.example.bedrock',
@@ -32,6 +21,17 @@ const iosDeviceInfo = DeviceInfo(
   osVersion: '17.5',
   model: 'iPhone16,1',
   manufacturer: 'Apple',
+  appVersion: '1.2.3',
+  buildNumber: '42',
+);
+
+const testDeviceInfo = DeviceInfo(
+  deviceId: 'test-device-id',
+  bundleId: 'com.example.bedrock',
+  platform: 'android',
+  osVersion: '15',
+  model: 'Pixel 9',
+  manufacturer: 'Google',
   appVersion: '1.2.3',
   buildNumber: '42',
 );
@@ -56,6 +56,19 @@ DioException unauthorizedDioException() {
       data: {'message': 'Invalid credentials'},
     ),
   );
+}
+
+final class FakeAppUpdateService implements AppUpdateService {
+  FakeAppUpdateService([this.storeVersion]);
+
+  String? storeVersion;
+  int checkCalls = 0;
+
+  @override
+  Future<String?> check() async {
+    checkCalls++;
+    return storeVersion;
+  }
 }
 
 final class FakeBiometricsService implements BiometricsService {
@@ -226,18 +239,5 @@ final class ScriptedHttpAdapter implements HttpClientAdapter {
   ) {
     requestCount++;
     return handler(options);
-  }
-}
-
-final class FakeAppUpdateService implements AppUpdateService {
-  FakeAppUpdateService([this.storeVersion]);
-
-  String? storeVersion;
-  int checkCalls = 0;
-
-  @override
-  Future<String?> check() async {
-    checkCalls++;
-    return storeVersion;
   }
 }

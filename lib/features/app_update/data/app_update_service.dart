@@ -4,6 +4,20 @@ import 'package:bedrock/features/app_update/domain/app_version.dart';
 import 'package:bedrock/services/device/device_info.dart';
 import 'package:in_app_update/in_app_update.dart';
 
+Future<void> runAndroidInAppUpdate() async {
+  final info = await InAppUpdate.checkForUpdate();
+  if (info.updateAvailability != .updateAvailable) return;
+
+  if (info.flexibleUpdateAllowed) {
+    final result = await InAppUpdate.startFlexibleUpdate();
+    if (result == .success) {
+      await InAppUpdate.completeFlexibleUpdate();
+    }
+  } else if (info.immediateUpdateAllowed) {
+    await InAppUpdate.performImmediateUpdate();
+  }
+}
+
 typedef PlatformUpdateRunner = Future<void> Function();
 
 class AppUpdateService {
@@ -14,27 +28,18 @@ class AppUpdateService {
     this._logger = const .new('AppUpdateService'),
   }) : _androidUpdateRunner = androidUpdateRunner ?? runAndroidInAppUpdate;
 
+  static const appStoreLookupBaseUrl = 'https://itunes.apple.com';
   final DeviceInfo _deviceInfo;
   final ApiClient _storeClient;
   final PlatformUpdateRunner _androidUpdateRunner;
-  final AppLogger _logger;
 
-  static const appStoreLookupBaseUrl = 'https://itunes.apple.com';
+  final AppLogger _logger;
 
   Future<String?> check() => switch (_deviceInfo.platform) {
     'android' => _runAndroidUpdate(),
     'ios' => _newerAppStoreVersion(),
-    _ => Future.value(),
+    _ => .value(),
   };
-
-  Future<String?> _runAndroidUpdate() async {
-    try {
-      await _androidUpdateRunner();
-    } on Object catch (error) {
-      _logger.warning('Android in-app update skipped', error);
-    }
-    return null;
-  }
 
   Future<String?> _newerAppStoreVersion() async {
     final result = await _storeClient.run((dio) async {
@@ -57,6 +62,15 @@ class AppUpdateService {
     );
   }
 
+  Future<String?> _runAndroidUpdate() async {
+    try {
+      await _androidUpdateRunner();
+    } on Object catch (error) {
+      _logger.warning('Android in-app update skipped', error);
+    }
+    return null;
+  }
+
   static String? _readStoreVersion(Map<String, dynamic>? data) {
     final results = data?['results'];
     if (results is List && results.isNotEmpty) {
@@ -66,19 +80,5 @@ class AppUpdateService {
       }
     }
     return null;
-  }
-}
-
-Future<void> runAndroidInAppUpdate() async {
-  final info = await InAppUpdate.checkForUpdate();
-  if (info.updateAvailability != UpdateAvailability.updateAvailable) return;
-
-  if (info.flexibleUpdateAllowed) {
-    final result = await InAppUpdate.startFlexibleUpdate();
-    if (result == AppUpdateResult.success) {
-      await InAppUpdate.completeFlexibleUpdate();
-    }
-  } else if (info.immediateUpdateAllowed) {
-    await InAppUpdate.performImmediateUpdate();
   }
 }
