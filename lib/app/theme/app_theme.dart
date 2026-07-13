@@ -133,7 +133,7 @@ abstract final class AppTheme {
     return .new(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       side: .new(color: scheme.onSurfaceVariant, width: 2),
-      fillColor: WidgetStateProperty.resolveWith((states) {
+      fillColor: .resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
           return states.contains(WidgetState.selected)
               ? _disabledContainer(scheme)
@@ -188,20 +188,20 @@ abstract final class AppTheme {
   static ElevatedButtonThemeData _elevatedButton(ColorScheme scheme) {
     return .new(
       style: _baseButtonStyle().copyWith(
-        backgroundColor: WidgetStateProperty.resolveWith((states) {
+        backgroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledContainer(scheme);
           }
           return scheme.surfaceContainerLow;
         }),
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
           return scheme.primary;
         }),
         overlayColor: _stateOverlay(scheme.primary),
-        elevation: WidgetStateProperty.resolveWith((states) {
+        elevation: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) return 0;
           if (states.contains(WidgetState.pressed)) return 1;
           if (states.contains(WidgetState.hovered)) return 3;
@@ -223,13 +223,13 @@ abstract final class AppTheme {
   static FilledButtonThemeData _filledButton(ColorScheme scheme) {
     return .new(
       style: _baseButtonStyle().copyWith(
-        backgroundColor: WidgetStateProperty.resolveWith((states) {
+        backgroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledContainer(scheme);
           }
           return scheme.primary;
         }),
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
@@ -243,7 +243,7 @@ abstract final class AppTheme {
   static IconButtonThemeData _iconButton(ColorScheme scheme) {
     return .new(
       style: .new(
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
@@ -327,7 +327,7 @@ abstract final class AppTheme {
   static MenuButtonThemeData _menuButton(ColorScheme scheme) {
     return .new(
       style: .new(
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
@@ -347,7 +347,7 @@ abstract final class AppTheme {
       backgroundColor: scheme.surfaceContainer,
       indicatorColor: scheme.secondaryContainer,
       labelBehavior: .alwaysShow,
-      iconTheme: WidgetStateProperty.resolveWith((states) {
+      iconTheme: .resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
           return IconThemeData(color: _disabledForeground(scheme));
         }
@@ -356,7 +356,7 @@ abstract final class AppTheme {
         }
         return IconThemeData(color: scheme.onSurfaceVariant);
       }),
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      labelTextStyle: .resolveWith((states) {
         final style = textTheme.labelMedium ?? const TextStyle(fontSize: 12);
         if (states.contains(WidgetState.disabled)) {
           return style.copyWith(color: _disabledForeground(scheme));
@@ -375,13 +375,13 @@ abstract final class AppTheme {
   static OutlinedButtonThemeData _outlinedButton(ColorScheme scheme) {
     return .new(
       style: _baseButtonStyle().copyWith(
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
           return scheme.primary;
         }),
-        side: WidgetStateProperty.resolveWith((states) {
+        side: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return BorderSide(color: _disabledContainer(scheme));
           }
@@ -410,7 +410,7 @@ abstract final class AppTheme {
 
   static RadioThemeData _radio(ColorScheme scheme) {
     return .new(
-      fillColor: WidgetStateProperty.resolveWith((states) {
+      fillColor: .resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
           return _disabledForeground(scheme);
         }
@@ -425,7 +425,7 @@ abstract final class AppTheme {
     return .new(
       radius: const .circular(4),
       thickness: const WidgetStatePropertyAll(6),
-      thumbColor: WidgetStateProperty.resolveWith((states) {
+      thumbColor: .resolveWith((states) {
         final active =
             states.contains(WidgetState.hovered) ||
             states.contains(WidgetState.dragged);
@@ -437,14 +437,14 @@ abstract final class AppTheme {
   static SegmentedButtonThemeData _segmentedButton(ColorScheme scheme) {
     return .new(
       style: .new(
-        backgroundColor: WidgetStateProperty.resolveWith((states) {
+        backgroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) return Colors.transparent;
           if (states.contains(WidgetState.selected)) {
             return scheme.secondaryContainer;
           }
           return Colors.transparent;
         }),
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
@@ -453,7 +453,7 @@ abstract final class AppTheme {
           }
           return scheme.onSurface;
         }),
-        side: WidgetStateProperty.resolveWith((states) {
+        side: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return BorderSide(color: _disabledContainer(scheme));
           }
@@ -489,7 +489,7 @@ abstract final class AppTheme {
       );
 
   static WidgetStateProperty<Color?> _stateOverlay(Color color) {
-    return WidgetStateProperty.resolveWith((states) {
+    return .resolveWith((states) {
       if (states.contains(WidgetState.pressed)) {
         return color.withValues(alpha: 0.10);
       }
@@ -505,7 +505,7 @@ abstract final class AppTheme {
 
   static SwitchThemeData _switch(ColorScheme scheme) {
     return .new(
-      thumbColor: WidgetStateProperty.resolveWith((states) {
+      thumbColor: .resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
           return states.contains(WidgetState.selected)
               ? scheme.surface
@@ -514,14 +514,14 @@ abstract final class AppTheme {
         if (states.contains(WidgetState.selected)) return scheme.onPrimary;
         return scheme.outline;
       }),
-      trackColor: WidgetStateProperty.resolveWith((states) {
+      trackColor: .resolveWith((states) {
         if (states.contains(WidgetState.disabled)) {
           return _disabledContainer(scheme);
         }
         if (states.contains(WidgetState.selected)) return scheme.primary;
         return scheme.surfaceContainerHighest;
       }),
-      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+      trackOutlineColor: .resolveWith((states) {
         if (states.contains(WidgetState.selected)) return Colors.transparent;
         if (states.contains(WidgetState.disabled)) {
           return _disabledContainer(scheme);
@@ -550,7 +550,7 @@ abstract final class AppTheme {
         textStyle: const WidgetStatePropertyAll(
           TextStyle(fontWeight: .w600),
         ),
-        foregroundColor: WidgetStateProperty.resolveWith((states) {
+        foregroundColor: .resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return _disabledForeground(scheme);
           }
