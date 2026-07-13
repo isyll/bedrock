@@ -20,13 +20,13 @@ final class ApiClient {
 
   Future<Result<T>> run<T>(Future<T> Function(Dio dio) action) async {
     try {
-      return Result.success(await action(dio));
+      return .success(await action(dio));
     } on DioException catch (error) {
-      return Result.failure(mapDioException(error));
+      return .failure(mapDioException(error));
     } on AppException catch (error) {
-      return Result.failure(error);
+      return .failure(error);
     } on Object catch (error, stackTrace) {
-      return Result.failure(
+      return .failure(
         UnexpectedException(
           'An unexpected error occurred',
           cause: error,

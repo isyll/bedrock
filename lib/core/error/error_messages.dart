@@ -3,8 +3,7 @@ import 'package:bedrock/core/l10n/app_localizations.dart';
 
 extension AppExceptionMessage on AppException {
   String localizedMessage(AppLocalizations l10n) => switch (this) {
-    NetworkException(kind: NetworkFailureKind.timeout) =>
-      l10n.errorTimeoutMessage,
+    NetworkException(kind: .timeout) => l10n.errorTimeoutMessage,
     NetworkException() => l10n.errorNetworkMessage,
     UnauthorizedException() => l10n.errorUnauthorizedMessage,
     ValidationException() => l10n.errorValidationMessage,

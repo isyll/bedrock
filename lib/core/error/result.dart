@@ -34,8 +34,8 @@ sealed class Result<T> {
   };
 
   Result<R> map<R>(R Function(T value) transform) => switch (this) {
-    Success(:final value) => Result.success(transform(value)),
-    Failure(:final exception) => Result.failure(exception),
+    Success(:final value) => .success(transform(value)),
+    Failure(:final exception) => .failure(exception),
   };
 }
 

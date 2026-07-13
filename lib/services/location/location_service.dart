@@ -74,12 +74,12 @@ final class LocationService {
 
   Future<Result<T>> _guarded<T>(Future<T> Function() action) async {
     try {
-      return Result.success(await action());
+      return .success(await action());
     } on AppException catch (error) {
-      return Result.failure(error);
+      return .failure(error);
     } on Exception catch (error, stackTrace) {
       _logger.warning('Location lookup failed', error);
-      return Result.failure(
+      return .failure(
         UnexpectedException(
           'Location lookup failed',
           cause: error,
