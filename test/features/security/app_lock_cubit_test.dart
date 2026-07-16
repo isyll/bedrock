@@ -6,8 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late InMemoryKeyValueStorage storage;
-  late FakeBiometricsService biometrics;
+  late final InMemoryKeyValueStorage storage;
+  late final FakeBiometricsService biometrics;
 
   setUp(() {
     storage = .new();

@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late InMemorySecureStorage storage;
+  late final InMemorySecureStorage storage;
 
   setUp(() => storage = .new());
 
