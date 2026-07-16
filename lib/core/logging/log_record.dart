@@ -10,7 +10,7 @@ enum LogLevel {
   final String label;
   final String symbol;
 
-  bool atLeast(LogLevel other) => value >= other.value;
+  bool operator >=(LogLevel other) => value >= other.value;
 }
 
 final class LogRecord {

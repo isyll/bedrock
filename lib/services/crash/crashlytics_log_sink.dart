@@ -11,7 +11,7 @@ final class CrashlyticsLogSink implements LogSink {
 
   @override
   void write(LogRecord record) {
-    if (record.level.atLeast(.error)) {
+    if (record.level >= .error) {
       _reporter.recordError(
         record.error ?? record.message,
         record.stackTrace,

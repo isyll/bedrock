@@ -36,7 +36,7 @@ final class AppLogger {
     );
 
     for (final sink in _sinks) {
-      if (record.level.atLeast(sink.minimumLevel)) {
+      if (record.level >= sink.minimumLevel) {
         sink.write(record);
       }
     }
