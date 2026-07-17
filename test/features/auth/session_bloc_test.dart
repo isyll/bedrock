@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late final SessionManager session;
-  late final AuthRepository repository;
+  late SessionManager session;
+  late AuthRepository repository;
 
   setUp(() async {
     final api = ScriptedAuthApi(

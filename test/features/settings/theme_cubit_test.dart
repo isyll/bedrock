@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late final InMemoryKeyValueStorage storage;
+  late InMemoryKeyValueStorage storage;
 
   setUp(() => storage = .new());
 

@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late final InMemoryKeyValueStorage storage;
-  late final FakeStoreService store;
+  late InMemoryKeyValueStorage storage;
+  late FakeStoreService store;
   late DateTime now;
 
   setUp(() {

@@ -9,11 +9,11 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 void main() {
-  late final InMemorySecureStorage secureStorage;
-  late final InMemoryKeyValueStorage keyValueStorage;
-  late final ScriptedAuthApi api;
-  late final SessionManager session;
-  late final AuthRepository repository;
+  late InMemorySecureStorage secureStorage;
+  late InMemoryKeyValueStorage keyValueStorage;
+  late ScriptedAuthApi api;
+  late SessionManager session;
+  late AuthRepository repository;
 
   SignInResult successfulSignIn() => .new(
     user: ScriptedAuthApi.demoUser,
