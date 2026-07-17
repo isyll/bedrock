@@ -5,10 +5,27 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+}
+
 val keystoreProperties = Properties().apply {
     val keystoreFile = rootProject.file("key.properties")
     if (keystoreFile.exists()) {
         keystoreFile.inputStream().use { load(it) }
+    }
+}
+
+gradle.taskGraph.whenReady {
+    val buildsProdRelease = allTasks.any { task ->
+        task.name.contains("Prod") && task.name.contains("Release")
+    }
+    if (buildsProdRelease && keystoreProperties.isEmpty()) {
+        throw GradleException(
+            "Missing android/key.properties: prod release builds must be " +
+                "signed with a release keystore, not the debug keystore.",
+        )
     }
 }
 

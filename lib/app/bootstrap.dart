@@ -93,7 +93,12 @@ Future<void> _configureSystemUi() async {
 Future<bool> _initializeFirebase(AppConfig config) async {
   final options = config.firebaseOptions;
   if (options == null) {
-    _logger.info('Firebase is not configured, related services disabled');
+    const message = 'Firebase is not configured, related services disabled';
+    if (config.isProd) {
+      _logger.warning(message);
+    } else {
+      _logger.info(message);
+    }
     return false;
   }
 

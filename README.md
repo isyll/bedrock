@@ -127,7 +127,17 @@ The session flow is the backbone: the backend issues an opaque access token with
 
 - Crash reporting activates automatically in non-debug builds once Firebase is configured; collection stays off in debug and without Firebase options.
 - Release builds via `make apk`, `make aab`, and `make ipa` are obfuscated with debug symbols split into `build/symbols`. Keep those symbols to deobfuscate Crashlytics stack traces.
-- For native Android crash symbolication, add the Crashlytics Gradle plugin alongside `google-services` once your Firebase project is wired.
+- For native Android crash symbolication, the `google-services` and `firebase-crashlytics` Gradle plugins apply automatically once `android/app/google-services.json` is present, uploading the R8 mapping file to Crashlytics on release builds.
+
+## Release checklist
+
+Template defaults to verify or set before shipping a real build:
+
+- **iOS push environment.** `ios/Runner/Runner.entitlements` pins `aps-environment` to `development`. Xcode rewrites it to `production` when it re-signs a distribution build with automatic signing, but confirm the archive carries `production` before uploading to TestFlight or the App Store.
+- **Android release signing.** Provide `android/key.properties` and a keystore. Prod release builds now fail fast when it is missing instead of silently shipping a debug-signed binary.
+- **Firebase configuration.** After `flutterfire configure`, flip `configured` to `true` in `lib/core/config/firebase/firebase_options_*.dart`; a prod launch logs a warning while it is still `false`, and the regenerated options replace the placeholder `iosBundleId`.
+- **Crashlytics symbols.** Keep the Dart symbols from `build/symbols` to deobfuscate stack traces; native symbolication is wired through the Gradle plugins above.
+- **iOS pods.** `ios/Podfile` pins the deployment target and trims unused `permission_handler` code; keep its permission flags in sync with the permissions the app actually requests.
 
 ## License
 
