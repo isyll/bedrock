@@ -119,11 +119,6 @@ final class SessionManager {
     return refreshAccessToken();
   }
 
-  Future<bool> _tokensStillPersisted() async {
-    return await _storage.containsKey(StorageKeys.accessToken) ||
-        await _storage.containsKey(StorageKeys.refreshToken);
-  }
-
   Future<String?> _performRefresh() async {
     final refreshToken = _tokens?.refreshToken;
     if (refreshToken == null) {
@@ -181,6 +176,11 @@ final class SessionManager {
     if (_status == value) return;
     _status = value;
     _statusController.add(value);
+  }
+
+  Future<bool> _tokensStillPersisted() async {
+    return await _storage.containsKey(StorageKeys.accessToken) ||
+        await _storage.containsKey(StorageKeys.refreshToken);
   }
 }
 

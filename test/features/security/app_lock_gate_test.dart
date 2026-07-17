@@ -3,7 +3,6 @@ import 'package:bedrock/core/storage/storage_keys.dart';
 import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/features/security/presentation/pages/lock_screen.dart';
 import 'package:bedrock/features/security/presentation/widgets/app_lock_gate.dart';
-import 'package:bedrock/services/biometrics/biometrics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +22,7 @@ void main() {
   testWidgets('overlays the lock screen while locked', (tester) async {
     final cubit = AppLockCubit(
       storage: InMemoryKeyValueStorage({StorageKeys.biometricLock: true}),
-      biometrics: FakeBiometricsService(authResult: BiometricAuthResult.failed),
+      biometrics: FakeBiometricsService(authResult: .failed),
     );
     addTearDown(cubit.close);
 

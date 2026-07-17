@@ -47,14 +47,6 @@ final class PushNotificationsService {
     await _tokenSubscription?.cancel();
   }
 
-  Future<AuthorizationStatus> requestPermission() async {
-    final settings = await FirebaseMessaging.instance.requestPermission();
-    _logger.info(
-      'Notification permission: ${settings.authorizationStatus.name}',
-    );
-    return settings.authorizationStatus;
-  }
-
   Future<void> initialize() async {
     final messaging = FirebaseMessaging.instance;
 
@@ -81,6 +73,14 @@ final class PushNotificationsService {
     if (token != null) await _onToken(token);
   }
 
+  Future<AuthorizationStatus> requestPermission() async {
+    final settings = await FirebaseMessaging.instance.requestPermission();
+    _logger.info(
+      'Notification permission: ${settings.authorizationStatus.name}',
+    );
+    return settings.authorizationStatus;
+  }
+
   Future<void> _initializeLocalNotifications() async {
     const initSettings = InitializationSettings(
       android: .new('@mipmap/ic_launcher'),
@@ -100,6 +100,12 @@ final class PushNotificationsService {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.createNotificationChannel(_androidChannel);
+  }
+
+  int _nextLocalNotificationId() {
+    final id = _localNotificationId;
+    _localNotificationId = (_localNotificationId + 1) & 0x7fffffff;
+    return id;
   }
 
   void _onForegroundMessage(RemoteMessage message) {
@@ -123,12 +129,6 @@ final class PushNotificationsService {
         payload: message.data[_routeKey] as String?,
       ),
     );
-  }
-
-  int _nextLocalNotificationId() {
-    final id = _localNotificationId;
-    _localNotificationId = (_localNotificationId + 1) & 0x7fffffff;
-    return id;
   }
 
   void _onMessageOpened(RemoteMessage message) {

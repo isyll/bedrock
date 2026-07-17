@@ -1,8 +1,6 @@
 import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/l10n/app_localizations.dart';
-import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/session/session_manager.dart';
-import 'package:bedrock/features/auth/data/auth_api.dart';
 import 'package:bedrock/features/auth/domain/auth_repository.dart';
 import 'package:bedrock/features/auth/presentation/cubit/sign_in_cubit.dart';
 import 'package:bedrock/features/auth/presentation/widgets/sign_in_form.dart';
@@ -18,18 +16,18 @@ void main() {
   late AuthRepository repository;
 
   setUp(() {
-    api = ScriptedAuthApi(
-      signInResult: SignInResult(
+    api = .new(
+      signInResult: .new(
         user: ScriptedAuthApi.demoUser,
-        tokens: AuthTokens(
+        tokens: .new(
           accessToken: 'access',
           refreshToken: 'refresh',
-          expiresAt: DateTime.now().toUtc().add(const Duration(hours: 1)),
+          expiresAt: .now().toUtc().add(const .new(hours: 1)),
         ),
       ),
     );
-    session = SessionManager(config: _config, storage: InMemorySecureStorage());
-    repository = AuthRepository(
+    session = .new(config: _config, storage: InMemorySecureStorage());
+    repository = .new(
       api: api,
       session: session,
       storage: InMemoryKeyValueStorage(),
