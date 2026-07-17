@@ -9,8 +9,13 @@ final class User extends Equatable {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
+    if (id == null) {
+      throw const FormatException('User response is missing an id');
+    }
+
     return .new(
-      id: json['id'].toString(),
+      id: id.toString(),
       email: json['email'] as String? ?? '',
       name: json['name'] as String?,
       avatarUrl: json['avatar_url'] as String?,

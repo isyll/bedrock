@@ -65,8 +65,8 @@ final class AppRouter {
 
     if (isAuthenticated && location == AppRoutes.signIn) {
       final from = state.uri.queryParameters['from'];
-      if (from != null && from.isNotEmpty) {
-        return Uri.decodeComponent(from);
+      if (from != null && from.startsWith('/') && !from.startsWith('//')) {
+        return from;
       }
       return AppRoutes.home;
     }

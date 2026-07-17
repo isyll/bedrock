@@ -64,6 +64,12 @@ final class SessionManager {
     await _storage.delete(StorageKeys.accessToken);
     await _storage.delete(StorageKeys.refreshToken);
     await _storage.delete(StorageKeys.accessTokenExpiry);
+
+    if (await _tokensStillPersisted()) {
+      _logger.warning('Token deletion incomplete, clearing secure storage');
+      await _storage.deleteAll();
+    }
+
     _setStatus(.none);
   }
 
@@ -109,6 +115,11 @@ final class SessionManager {
 
     _logger.debug('Access token expired, refreshing before request');
     return refreshAccessToken();
+  }
+
+  Future<bool> _tokensStillPersisted() async {
+    return await _storage.containsKey(StorageKeys.accessToken) ||
+        await _storage.containsKey(StorageKeys.refreshToken);
   }
 
   Future<String?> _performRefresh() async {

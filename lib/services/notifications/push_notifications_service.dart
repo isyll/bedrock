@@ -39,6 +39,8 @@ final class PushNotificationsService {
   StreamSubscription<RemoteMessage>? _openedSubscription;
   StreamSubscription<String>? _tokenSubscription;
 
+  int _localNotificationId = 0;
+
   Future<void> dispose() async {
     await _foregroundSubscription?.cancel();
     await _openedSubscription?.cancel();
@@ -103,7 +105,7 @@ final class PushNotificationsService {
 
     unawaited(
       _localNotifications.show(
-        id: notification.hashCode,
+        id: _nextLocalNotificationId(),
         title: notification.title,
         body: notification.body,
         notificationDetails: .new(
@@ -118,6 +120,12 @@ final class PushNotificationsService {
         payload: message.data[_routeKey] as String?,
       ),
     );
+  }
+
+  int _nextLocalNotificationId() {
+    final id = _localNotificationId;
+    _localNotificationId = (_localNotificationId + 1) & 0x7fffffff;
+    return id;
   }
 
   void _onMessageOpened(RemoteMessage message) {

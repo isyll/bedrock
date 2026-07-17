@@ -47,12 +47,15 @@ final class LocationService {
   Stream<AppLocation> watchLocation({
     LocationAccuracy accuracy = .high,
     int distanceFilterMeters = 25,
-  }) => Geolocator.getPositionStream(
-    locationSettings: .new(
-      accuracy: accuracy,
-      distanceFilter: distanceFilterMeters,
-    ),
-  ).map(AppLocation.fromPosition);
+  }) async* {
+    await _ensureReady();
+    yield* Geolocator.getPositionStream(
+      locationSettings: .new(
+        accuracy: accuracy,
+        distanceFilter: distanceFilterMeters,
+      ),
+    ).map(AppLocation.fromPosition);
+  }
 
   Future<void> _ensureReady() async {
     if (!await isServiceEnabled()) {

@@ -34,6 +34,10 @@ final class AuthInterceptor extends Interceptor {
     options.headers['Authorization'] = 'Bearer $newToken';
     options.extra[_retriedKey] = true;
 
+    if (options.data case final FormData form) {
+      options.data = form.clone();
+    }
+
     try {
       final response = await _retryClient.fetch<dynamic>(options);
       handler.resolve(response);

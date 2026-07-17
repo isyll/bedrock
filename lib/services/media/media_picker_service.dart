@@ -3,7 +3,6 @@ import 'package:bedrock/core/error/result.dart';
 import 'package:bedrock/services/permissions/app_permission.dart';
 import 'package:bedrock/services/permissions/permissions_service.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 final class MediaPickerService {
@@ -92,7 +91,7 @@ final class MediaPickerService {
       return .success(await action());
     } on AppException catch (error) {
       return .failure(error);
-    } on PlatformException catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       return .failure(
         UnexpectedException(
           'Media selection failed',
