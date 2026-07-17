@@ -26,8 +26,7 @@ Collect from the user before starting (ask if missing):
    - In `ios/Runner.xcodeproj/project.pbxproj`: update all `PRODUCT_BUNDLE_IDENTIFIER` values (dev configs get the `.dev` suffix), `APP_DISPLAY_NAME` values, and `DEEP_LINK_HOST` values.
    - In `ios/Runner/Info.plist`: update `CFBundleName` and the `CFBundleURLSchemes` custom scheme.
 4. Update app config:
-   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `deepLinkHost`, `appStoreId` (prod, when known), and `authEndpoints` (an `AuthEndpoints` instance) when the backend paths differ from the defaults.
-   - `lib/core/config/app_config.dart`: default `deepLinkScheme`.
+   - `lib/main_dev.dart` and `lib/main_prod.dart`: `appName`, `apiBaseUrl`, `appStoreId` (prod, when known), and `authEndpoints` (an `AuthEndpoints` instance) when the backend paths differ from the defaults.
    - Android custom scheme in `android/app/src/main/AndroidManifest.xml` (`<data android:scheme=...>`).
    - iOS usage descriptions in `ios/Runner/Info.plist`: keep only the permissions the app requests and reword them for the product.
    - Certificate pinning placeholder domain in `android/app/src/main/res/xml/network_security_config.xml` when enabling pinning.

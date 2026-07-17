@@ -4,6 +4,7 @@ import 'package:bedrock/app/router/stream_refresh_listenable.dart';
 import 'package:bedrock/features/about/presentation/pages/about_page.dart';
 import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/auth/presentation/pages/sign_in_page.dart';
+import 'package:bedrock/features/error/presentation/pages/not_found_page.dart';
 import 'package:bedrock/features/home/presentation/pages/home_page.dart';
 import 'package:bedrock/features/settings/presentation/pages/settings_page.dart';
 import 'package:flutter/widgets.dart';
@@ -21,6 +22,7 @@ final class AppRouter {
     initialLocation: AppRoutes.home,
     refreshListenable: StreamRefreshListenable(_sessionBloc.stream),
     redirect: _redirect,
+    errorBuilder: (context, state) => const NotFoundPage(),
     observers: [AppRouteObserver()],
     routes: [
       GoRoute(

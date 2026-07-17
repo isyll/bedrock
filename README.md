@@ -139,6 +139,17 @@ Template defaults to verify or set before shipping a real build:
 - **Crashlytics symbols.** Keep the Dart symbols from `build/symbols` to deobfuscate stack traces; native symbolication is wired through the Gradle plugins above.
 - **iOS pods.** `ios/Podfile` pins the deployment target and trims unused `permission_handler` code; keep its permission flags in sync with the permissions the app actually requests.
 
+## Release pipeline
+
+Pushing a `v*` tag runs `.github/workflows/release.yml`: it verifies (format, analyze, test), then builds a signed Android app bundle and an iOS IPA, uploads both plus the debug symbols as artifacts, and optionally ships to Firebase App Distribution and App Store Connect. Configure these repository secrets before tagging a release:
+
+| Secret | Purpose |
+| --- | --- |
+| `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` | Android release signing |
+| `IOS_DIST_CERT_BASE64`, `IOS_DIST_CERT_PASSWORD`, `IOS_PROVISIONING_PROFILE_BASE64`, `APPLE_TEAM_ID` | iOS distribution signing |
+| `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_API_KEY_BASE64` | App Store Connect upload (optional) |
+| `FIREBASE_ANDROID_APP_ID`, `FIREBASE_SERVICE_ACCOUNT` | Firebase App Distribution (optional) |
+
 ## License
 
 Released under the [MIT License](LICENSE) by [Ibrahima Sylla](https://github.com/isyll). Use it freely for personal and commercial projects.

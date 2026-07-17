@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppTheme {
-  static ThemeData get dark => _build(.dark);
+  static final ThemeData dark = _build(.dark);
 
-  static ThemeData get light => _build(.light);
+  static final ThemeData light = _build(.light);
 
   static AppBarTheme _appBar(
     ColorScheme scheme,

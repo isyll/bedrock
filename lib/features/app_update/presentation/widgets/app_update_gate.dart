@@ -36,7 +36,11 @@ class AppUpdateGate extends StatelessWidget {
       cancelLabel: l10n.updateLaterButton,
     );
 
-    await cubit.dismiss();
-    if (accepted) await cubit.openStore();
+    if (accepted) {
+      cubit.clear();
+      await cubit.openStore();
+    } else {
+      await cubit.dismiss();
+    }
   }
 }

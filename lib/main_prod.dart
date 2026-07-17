@@ -6,7 +6,6 @@ Future<void> main() => bootstrap(
     flavor: .prod,
     appName: 'Bedrock',
     apiBaseUrl: 'https://api.example.com',
-    deepLinkHost: 'app.example.com',
     firebaseOptions: ProdFirebaseOptions.currentPlatformOrNull,
   ),
 );

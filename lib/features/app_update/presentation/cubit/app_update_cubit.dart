@@ -41,6 +41,11 @@ final class AppUpdateCubit extends Cubit<AppUpdateState> {
     emit(.new(availableVersion: version));
   }
 
+  void clear() {
+    if (isClosed) return;
+    emit(const .new());
+  }
+
   Future<void> dismiss() async {
     final version = state.availableVersion;
     if (version != null) {

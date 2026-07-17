@@ -31,7 +31,7 @@ void main() {
 
   group('SignInCubit', () {
     blocTest<SignInCubit, SignInState>(
-      'emits submitting then success on valid credentials',
+      'emits submitting then resets on valid credentials',
       build: () => .new(authRepository: repository),
       setUp: () => api.signInResult = .new(
         user: ScriptedAuthApi.demoUser,
@@ -45,7 +45,7 @@ void main() {
           cubit.submit(email: 'demo@example.com', password: 'password1'),
       expect: () => <SignInState>[
         const .new(isSubmitting: true),
-        const .new(isSuccess: true),
+        const .new(),
       ],
     );
 

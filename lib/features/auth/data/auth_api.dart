@@ -44,7 +44,7 @@ final class FakeAuthApi implements AuthApi {
       tokens: .new(
         accessToken: 'fake-access-${DateTime.now().millisecondsSinceEpoch}',
         refreshToken: 'fake-refresh-token',
-        expiresAt: .now().toUtc().add(const .new(hours: 1)),
+        expiresAt: .now().toUtc().add(const .new(days: 3650)),
       ),
     );
   }

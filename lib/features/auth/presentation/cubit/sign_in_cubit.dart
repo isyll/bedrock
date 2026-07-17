@@ -20,7 +20,7 @@ final class SignInCubit extends Cubit<SignInState> {
     );
 
     result.fold(
-      onSuccess: (_) => emit(const .new(isSuccess: true)),
+      onSuccess: (_) => emit(const .new()),
       onFailure: (exception) => emit(.new(failure: exception)),
     );
   }

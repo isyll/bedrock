@@ -9,6 +9,17 @@ final class LoggingInterceptor extends Interceptor {
   static const _startedAtKey = 'log.started_at';
   static const _maxBodyLength = 2048;
   static const _redactedHeaders = {'authorization', 'cookie', 'set-cookie'};
+  static const _redactedBodyKeys = {
+    'password',
+    'current_password',
+    'new_password',
+    'token',
+    'access_token',
+    'refresh_token',
+    'id_token',
+    'secret',
+    'authorization',
+  };
 
   final AppLogger _logger;
 
@@ -63,8 +74,8 @@ final class LoggingInterceptor extends Interceptor {
   String _formatBody(Object? body) {
     if (body == null) return '';
     final rendered = switch (body) {
-      final Map<dynamic, dynamic> map => _prettyJson(map),
-      final List<dynamic> list => _prettyJson(list),
+      final Map<dynamic, dynamic> map => _prettyJson(_redact(map)),
+      final List<dynamic> list => _prettyJson(_redact(list)),
       final FormData form =>
         'form-data: ${form.fields.map((field) => field.key).join(', ')}',
       final String text when text.isNotEmpty => _prettyText(text),
@@ -95,10 +106,24 @@ final class LoggingInterceptor extends Interceptor {
 
   String _prettyText(String text) {
     try {
-      return _prettyJson(jsonDecode(text));
+      return _prettyJson(_redact(jsonDecode(text)));
     } on FormatException {
       return text;
     }
+  }
+
+  Object? _redact(Object? value) {
+    if (value is Map) {
+      return value.map((key, dynamic entry) {
+        final sensitive =
+            key is String && _redactedBodyKeys.contains(key.toLowerCase());
+        return MapEntry(key, sensitive ? '***' : _redact(entry));
+      });
+    }
+    if (value is List) {
+      return value.map(_redact).toList();
+    }
+    return value;
   }
 
   String _truncate(String value) {

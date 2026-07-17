@@ -8,8 +8,6 @@ final class AppConfig {
     this.authEndpoints = const .new(),
     this.appStoreId = '',
     this.firebaseOptions,
-    this.deepLinkScheme = 'bedrock',
-    this.deepLinkHost = '',
     this.useFakeAuth = false,
   });
 
@@ -19,8 +17,6 @@ final class AppConfig {
   final AuthEndpoints authEndpoints;
   final String appStoreId;
   final FirebaseOptions? firebaseOptions;
-  final String deepLinkScheme;
-  final String deepLinkHost;
   final bool useFakeAuth;
 
   bool get firebaseEnabled => firebaseOptions != null;

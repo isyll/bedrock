@@ -4,6 +4,7 @@ import 'package:bedrock/core/config/app_config.dart';
 import 'package:bedrock/core/logging/app_logger.dart';
 import 'package:bedrock/core/network/interceptors/client_info_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
+import 'package:bedrock/core/network/network_timeouts.dart';
 import 'package:bedrock/core/session/auth_tokens.dart';
 import 'package:bedrock/core/storage/secure_storage.dart';
 import 'package:bedrock/core/storage/storage_keys.dart';
@@ -24,8 +25,9 @@ final class SessionManager {
            .new(
              .new(
                baseUrl: config.apiBaseUrl,
-               connectTimeout: const .new(seconds: 15),
-               receiveTimeout: const .new(seconds: 20),
+               connectTimeout: NetworkTimeouts.connect,
+               sendTimeout: NetworkTimeouts.send,
+               receiveTimeout: NetworkTimeouts.receive,
                headers: const {'Accept': 'application/json'},
              ),
            ) {

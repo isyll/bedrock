@@ -6,6 +6,7 @@ import 'package:bedrock/core/network/interceptors/auth_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/client_info_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/locale_interceptor.dart';
 import 'package:bedrock/core/network/interceptors/logging_interceptor.dart';
+import 'package:bedrock/core/network/network_timeouts.dart';
 import 'package:bedrock/core/session/session_manager.dart';
 import 'package:bedrock/services/device/device_info.dart';
 import 'package:dio/dio.dart';
@@ -55,7 +56,7 @@ final class ApiClientFactory {
   ApiClient create({
     required String baseUrl,
     bool authenticated = true,
-    Duration timeout = const .new(seconds: 30),
+    Duration timeout = NetworkTimeouts.receive,
     Map<String, String> headers = const {},
     List<Interceptor> interceptors = const [],
   }) {
@@ -91,7 +92,7 @@ final class ApiClientFactory {
   }) => .new(
     .new(
       baseUrl: baseUrl,
-      connectTimeout: const .new(seconds: 15),
+      connectTimeout: NetworkTimeouts.connect,
       sendTimeout: timeout,
       receiveTimeout: timeout,
       receiveDataWhenStatusError: true,

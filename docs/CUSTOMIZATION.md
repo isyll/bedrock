@@ -36,7 +36,6 @@ AppConfig(
   appName: 'My App',
   apiBaseUrl: 'https://api.example.com',
   appStoreId: '1234567890',
-  deepLinkHost: 'app.example.com',
 )
 ```
 
@@ -121,8 +120,8 @@ Configuration lives in three places:
 
 | What | Where |
 | --- | --- |
-| Custom scheme | `deepLinkScheme` in `lib/core/config/app_config.dart`, `<data android:scheme=…>` in `AndroidManifest.xml`, `CFBundleURLSchemes` in `ios/Runner/Info.plist` |
-| HTTPS host per flavor | `deepLinkHost` in each entry point, `manifestPlaceholders["deepLinkHost"]` in `android/app/build.gradle.kts`, `DEEP_LINK_HOST` in `project.pbxproj` |
+| Custom scheme | `<data android:scheme=…>` in `AndroidManifest.xml`, `CFBundleURLSchemes` in `ios/Runner/Info.plist` |
+| HTTPS host per flavor | `manifestPlaceholders["deepLinkHost"]` in `android/app/build.gradle.kts`, `DEEP_LINK_HOST` in `project.pbxproj` |
 | Route handling | `go_router` matches the path, the `redirect` guard sends unauthenticated users to sign in and back after login |
 
 For verified HTTPS links you must also publish two files on each host:

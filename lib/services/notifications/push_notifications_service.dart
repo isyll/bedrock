@@ -47,13 +47,16 @@ final class PushNotificationsService {
     await _tokenSubscription?.cancel();
   }
 
-  Future<void> initialize() async {
-    final messaging = FirebaseMessaging.instance;
-
-    final settings = await messaging.requestPermission();
+  Future<AuthorizationStatus> requestPermission() async {
+    final settings = await FirebaseMessaging.instance.requestPermission();
     _logger.info(
       'Notification permission: ${settings.authorizationStatus.name}',
     );
+    return settings.authorizationStatus;
+  }
+
+  Future<void> initialize() async {
+    final messaging = FirebaseMessaging.instance;
 
     await messaging.setForegroundNotificationPresentationOptions(
       alert: true,

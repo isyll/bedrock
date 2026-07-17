@@ -70,6 +70,9 @@
   "updateLaterButton": "Later",
   "emptyTitle": "Nothing here yet",
   "emptyMessage": "There is no content to display.",
+  "notFoundTitle": "Page not found",
+  "notFoundMessage": "The page you are looking for does not exist.",
+  "goHomeButton": "Go home",
   "aboutTitle": "About",
   "aboutVersion": "Version {version}",
   "@aboutVersion": {

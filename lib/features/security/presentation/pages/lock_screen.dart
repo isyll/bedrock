@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bedrock/core/extensions/context_extensions.dart';
+import 'package:bedrock/features/auth/presentation/bloc/session_bloc.dart';
 import 'package:bedrock/features/security/presentation/cubit/app_lock_cubit.dart';
 import 'package:bedrock/shared/animations/staggered_column.dart';
 import 'package:bedrock/shared/widgets/buttons/app_button.dart';
@@ -57,6 +58,11 @@ class _LockScreenState extends State<LockScreen> {
                     loading: _authenticating,
                     onPressed: _unlock,
                   ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _authenticating ? null : _signOut,
+                    child: Text(l10n.signOutButton),
+                  ),
                 ],
               ),
             ),
@@ -70,6 +76,11 @@ class _LockScreenState extends State<LockScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_unlock()));
+  }
+
+  void _signOut() {
+    context.read<SessionBloc>().add(const SessionSignOutRequested());
+    context.read<AppLockCubit>().unlockForSignOut();
   }
 
   Future<void> _unlock() async {

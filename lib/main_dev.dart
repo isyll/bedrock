@@ -11,7 +11,6 @@ Future<void> main() {
       apiBaseUrl: apiOverride.isNotEmpty
           ? apiOverride
           : 'https://api.dev.example.com',
-      deepLinkHost: 'app.dev.example.com',
       firebaseOptions: DevFirebaseOptions.currentPlatformOrNull,
       useFakeAuth: true,
     ),

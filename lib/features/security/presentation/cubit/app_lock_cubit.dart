@@ -45,6 +45,11 @@ final class AppLockCubit extends Cubit<AppLockState> {
     emit(state.copyWith(status: .locked));
   }
 
+  void unlockForSignOut() {
+    if (!state.isLocked) return;
+    emit(state.copyWith(status: .unlocked));
+  }
+
   Future<BiometricAuthResult> unlock(String reason) async {
     if (!state.isLocked) return .success;
 
